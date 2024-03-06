@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import cns from 'classnames';
 import { useForm } from 'react-hook-form';
 import { SignupForm, SignupSchema } from './Signup.schema';
 import { Props } from './Signup.models';
@@ -19,6 +18,10 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
+import { signup } from '@/apis/user';
+import { isBoolean } from 'lodash';
+import { error } from 'console';
+import { cn } from '@/lib/utils';
 
 const Signup = (props: Props) => {
   const { className = '' } = props;
@@ -37,32 +40,49 @@ const Signup = (props: Props) => {
     },
   });
 
+  const {
+    control,
+    formState: { errors, isValid },
+    handleSubmit,
+  } = form;
+
   const onSignupSubmit = ({
     email,
+    phoneNumber,
     username,
     password,
-    confirm,
   }: SignupForm) => {
-    console.log({ email, username, password, confirm });
-    console.log('error: ', form.formState.errors);
-    if (Object.keys(form.formState.errors).length === 0) {
-      toast.success('Đăng ký thành công!');
+    console.log({ email, phoneNumber, username, password });
+    if (isValid) {
+      const res = signup({
+        email,
+        name: username,
+        contactNumber: phoneNumber,
+        password,
+      });
+
+      res
+        .then((res) => {
+          if (res) router.replace('/signin');
+        })
+        .catch((error) => {
+          console.log({ error });
+        });
     }
-    router.push('/signin');
   };
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSignupSubmit)}
-        className={cns('space-y-2 m-auto w-[400px]', className)}
+        onSubmit={handleSubmit(onSignupSubmit)}
+        className={cn('space-y-2 m-auto w-[400px]', className)}
       >
-        <p className='font-extrabold text-center text-3xl text-green-500'>
+        <p className='font-extrabold text-center text-3xl text-white'>
           ĐĂNG KÝ
         </p>
 
         <FormField
-          control={form.control}
+          control={control}
           name='email'
           render={({ field }) => (
             <FormItem>
@@ -76,7 +96,7 @@ const Signup = (props: Props) => {
         />
 
         <FormField
-          control={form.control}
+          control={control}
           name='phoneNumber'
           render={({ field }) => (
             <FormItem>
@@ -90,7 +110,7 @@ const Signup = (props: Props) => {
         />
 
         <FormField
-          control={form.control}
+          control={control}
           name='username'
           render={({ field }) => (
             <FormItem>
@@ -104,7 +124,7 @@ const Signup = (props: Props) => {
         />
 
         <FormField
-          control={form.control}
+          control={control}
           name='password'
           render={({ field }) => (
             <FormItem>
@@ -122,7 +142,7 @@ const Signup = (props: Props) => {
         />
 
         <FormField
-          control={form.control}
+          control={control}
           name='confirm'
           render={({ field }) => (
             <FormItem>
@@ -139,15 +159,15 @@ const Signup = (props: Props) => {
           )}
         />
 
-        <Button type='submit' className='bg-green-500 w-full'>
+        <Button type='submit' variant='primary' className='w-full'>
           Đăng ký
         </Button>
 
-        <p className='text-center'>
+        <p className='text-center text-white'>
           Đã có tài khoản?{' '}
           <Link
             href='/signin'
-            className='text-green-500 hover:text-blue-400 transition-colors duration-150'
+            className='text-black hover:text-blue-200 transition-colors duration-200'
           >
             Đăng nhập
           </Link>
