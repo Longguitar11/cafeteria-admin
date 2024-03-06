@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import orderSlice from './orderSlice';
 import dishSlice from './dishSlice';
 import categorySlice from './categorySlice';
+import userSlice from './userSlice';
 
 export const store = () => {
   return configureStore({
@@ -9,6 +10,7 @@ export const store = () => {
       orderStore: orderSlice,
       dishStore: dishSlice,
       categoryStore: categorySlice,
+      userStore: userSlice,
     },
   });
 };

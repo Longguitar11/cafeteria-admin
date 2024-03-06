@@ -2,7 +2,10 @@
 
 import { toast } from 'react-toastify';
 import Axios from './axiosConfig';
-import axios, { AxiosHeaders } from 'axios';
+import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { Dispatch, UnknownAction } from '@reduxjs/toolkit';
+import { getAllUsers as getUsers } from '@/redux/userSlice';
 
 interface SignupRequest {
   email: string;
@@ -96,46 +99,83 @@ export const forgotPassword = async (data: ForgotPasswordRequest) => {
   }
 };
 
-
 interface ChangePasswordRequest {
-    oldPassword: string;
-    newPassword: string;
-  }
-  
-  export const changePassword = async (data: ChangePasswordRequest) => {
-    const { oldPassword, newPassword } = data;
-  
-    try {
-      const { status, data } = await Axios.post('/user/changePassword', {
-        oldPassword, newPassword
-      });
-  
-      console.log({ status, data });
-  
-      if (status >= 200 && status < 400) {
-        toast.success('Đổi mật khẩu thành công!');
-        return true;
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data.message);
-      } else {
-        toast.error('Đã xảy ra lỗi không mong muốn!');
-      }
-    }
-  };
+  oldPassword: string;
+  newPassword: string;
+}
 
+export const changePassword = async (data: ChangePasswordRequest) => {
+  const { oldPassword, newPassword } = data;
+
+  try {
+    const { status, data } = await Axios.post('/user/changePassword', {
+      oldPassword,
+      newPassword,
+    });
+
+    console.log({ status, data });
+
+    if (status >= 200 && status < 400) {
+      toast.success('Đổi mật khẩu thành công!');
+      return true;
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      toast.error(error.response?.data.message);
+    } else {
+      toast.error('Đã xảy ra lỗi không mong muốn!');
+    }
+  }
+};
 
 export const checkToken = async () => {
   console.log('check token api');
-
-  const token = localStorage.getItem('userToken');
 
   try {
     const { status, data } = await Axios.get('/user/checkToken');
 
     console.log({ status, data });
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      toast.error(error.response?.data.message);
+    } else {
+      toast.error('Đã xảy ra lỗi không mong muốn!');
+    }
+  }
+};
 
+export const activateUserAccount = async (id: number, dispatch: any) => {
+  try {
+    const { status, data } = await Axios.post('/user/update', { id });
+
+    console.log({ status, data });
+
+    if (status >= 200 && status < 400) {
+      toast.success(`Kích hoạt tài khoản thành công!`);
+
+      getAllUsers(dispatch);
+      return true;
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      toast.error(error.response?.data.message);
+    } else {
+      toast.error('Đã xảy ra lỗi không mong muốn!');
+    }
+  }
+};
+
+// GET ALL USERS
+
+export const getAllUsers = async (dispatch: any) => {
+  try {
+    const { status, data } = await Axios.get('/user/get');
+
+    console.log({ status, data });
+
+    if (status >= 200 && status < 400) {
+      dispatch(getUsers(data));
+    } else toast.error('Không thể lấy dữ liệu người dùng!');
   } catch (error) {
     if (axios.isAxiosError(error)) {
       toast.error(error.response?.data.message);

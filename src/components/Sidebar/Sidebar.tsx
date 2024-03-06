@@ -13,58 +13,24 @@ import { cn } from '@/lib/utils';
 import { Options, OrderModal } from './Sidebar.views';
 import { useAuthContext } from '@/containers/Auth/Auth.context';
 import { jwtDecode } from 'jwt-decode';
+import { sideBar } from '@/constants/sidebar';
 
-const Header = () => {
+const Sidebar = () => {
   const router = useRouter();
-  const dispatch = useAppDispatch();
 
   const { token, removeToken } = useAuthContext();
 
   const [isOptionOpen, setIsOptionOpen] = useState<boolean>(false);
-  const [isOrderOpen, setIsOrderOpen] = useState<boolean>(false);
   const [isHovered, setIsHovered] = useState<DropdownHoverType>({
     categories: { header: false, option: false },
     bestSelling: { header: false, option: false },
   });
-
-  const order = useAppSelector((state) => state.orderStore.order);
 
   const onCategoryClick = (id: string) => {
     setIsHovered({ categories: { header: false } });
     if (isOptionOpen) setIsOptionOpen(false);
 
     router.push(`/categories/${id}`);
-  };
-
-  const onDeleteClick = ({
-    idCate,
-    idDish,
-  }: {
-    idCate: string;
-    idDish: string;
-  }) => {
-    dispatch(deleteDish({ idCate, idDish }));
-  };
-
-  const onPayClick = () => {
-    dispatch(confirmOrder());
-    setIsOrderOpen(false);
-  };
-
-  const onConfirmCancelClick = () => {
-    dispatch(cancelOrder());
-    setIsOrderOpen(false);
-  };
-
-  const onDishesManagementClick = () => {
-    router.push('/dishes-management');
-  };
-
-  const onAccountClick = (url: string) => {
-    if (url === '/signin') {
-      removeToken();
-      router.push(url);
-    } else router.push(url);
   };
 
   useEffect(() => {
@@ -84,8 +50,7 @@ const Header = () => {
   return (
     <section
       className={cn(
-        'h-full w-72 text-white bg-cyan-800 bg-opacity-70 fixed top-0 left-0 flex flex-col gap-6 py-10',
-        isOrderOpen && 'min-w-[800px]'
+        'h-full w-72 text-white bg-cyan-800 bg-opacity-70 fixed top-0 left-0 flex flex-col gap-6 py-20'
       )}
     >
       <Link href='/'>
@@ -96,25 +61,15 @@ const Header = () => {
         </div>
       </Link>
 
-      <Button variant='ghost'>Quản lý loại</Button>
-
-      <Button variant='ghost' onClick={onDishesManagementClick}>
-        Quản lý món
-      </Button>
-
-      <Button variant='ghost'>
-        <Link href='/transaction-history' className='text-inherit'>
-          Lịch sử giao dịch
-        </Link>
-      </Button>
-
-      <Button
-        variant='ghost'
-        onMouseOver={() => setIsHovered({ account: { header: true } })}
-        onMouseLeave={() => setIsHovered({ account: { header: false } })}
-      >
-        Tài khoản
-      </Button>
+      {sideBar.map((item) => (
+        <Button
+          key={item.name}
+          variant='ghost'
+          onClick={() => router.push(item.url)}
+        >
+          {item.name}
+        </Button>
+      ))}
 
       <div className='relative w-8 h-8 block sm:hidden'>
         <Image
@@ -136,17 +91,8 @@ const Header = () => {
           onCategoryClick={onCategoryClick}
         />
       )}
-
-      <OrderModal
-        isOpen={isOrderOpen}
-        setIsOpen={setIsOrderOpen}
-        order={order}
-        onConfirmCancelClick={onConfirmCancelClick}
-        onPayClick={onPayClick}
-        onDeleteClick={onDeleteClick}
-      />
     </section>
   );
 };
 
-export default Header;
+export default Sidebar;

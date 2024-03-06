@@ -5,25 +5,22 @@ import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 const Dropdown = (props: DropdownType) => {
-  const {
-    className = '',
-    data,
-    onClick,
-    onMouseLeave,
-    onMouseOver,
-  } = props;
+  const { className = '', data, onClick, onMouseLeave, onMouseOver } = props;
 
   return (
-    <div className={cn('absolute shadow bg-gray-50 rounded w-fit', className)}>
+    <div
+      className={cn(
+        'absolute shadow bg-gray-50 rounded w-fit whitespace-nowrap',
+        className
+      )}
+    >
       {data.map((item, index) => (
         <div
           key={index}
           onMouseOver={onMouseOver}
           onMouseLeave={onMouseLeave}
           onClick={() => {
-              item.url ?  
-               onClick(item.url)
-              : onClick(item.id)
+            item.url ? onClick(item.url) : onClick(item.id);
           }}
           className={cn(
             'cursor-pointer p-3 text-gray-800 hover:bg-white transition-all duration-200',

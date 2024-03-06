@@ -7,6 +7,7 @@ import StoreProvider from '../StoreProvider';
 import { AuthProvider } from '@/containers/Auth';
 import '../globals.css';
 import { cn } from '@/lib/utils';
+import { Header } from '@/components/Header';
 
 const robotoMono = Roboto_Mono({ subsets: ['vietnamese'] });
 
@@ -28,6 +29,8 @@ export default function RootLayout({
             suppressHydrationWarning={true}
             className={cn('static', robotoMono.className)}
           >
+            <Header />
+
             <Sidebar />
 
             <ToastContainer
@@ -41,7 +44,7 @@ export default function RootLayout({
               pauseOnHover
               theme='light'
             />
-            <div className='absolute left-72 w-[calc(100%-288px)] bg-sky-100 h-full z-[-1]'>
+            <div className='absolute left-72 w-[calc(100%-288px)] h-full p-4 pt-20 bg-sky-100 z-[-1]'>
               {children}
             </div>
           </body>
