@@ -1,4 +1,4 @@
-import { DishForm } from '@/schemas/dish';
+import { DishForm } from '@/schemas/product';
 import { Dispatch, SetStateAction } from 'react';
 
 export interface Props {

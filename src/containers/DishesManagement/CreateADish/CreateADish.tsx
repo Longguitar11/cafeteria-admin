@@ -24,60 +24,52 @@ import { toast } from 'react-toastify';
 import { Props } from './CreateADish.models';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { DishForm, DishSchema } from '@/schemas/dish';
+import { DishForm, DishSchema } from '@/schemas/product';
 import { CategorySelect } from '@/components/CategorySelect';
 import { PriceInput } from '@/components/InputCustom';
 
 const CreateADish = (props: Props) => {
   const { className = '', open, setOpen, onSubmit } = props;
 
-  const [image, setImage] = useState<File | null>(null);
+  // const [image, setImage] = useState<File | null>(null);
 
-  console.log({ image });
+  // console.log({ image });
   const form = useForm<DishForm>({
     resolver: zodResolver(DishSchema),
-    // mode: 'o',
     defaultValues: {
       name: '',
-      price: 12000,
-      categogy: '',
-      stock: 1,
-      thumbnail: '',
+      price: 10000,
+      categoryId: undefined,
+      description: '',
     },
   });
 
   const {
     control,
-    formState: { errors, isSubmitSuccessful, isValid },
+    formState: { isSubmitSuccessful, isValid },
     handleSubmit,
     reset,
-    getValues,
-    setValue,
   } = form;
-
-  const onStockBlur = () => {
-    if (Number.isNaN(getValues('stock'))) setValue('stock', 1);
-  };
 
   const onResetClick = (e: any) => {
     e.preventDefault();
     if (isValid) {
       reset();
-      setImage(null);
+      // setImage(null);
     }
   };
 
   useEffect(() => {
     //reset
     if (isSubmitSuccessful) {
-      setImage(null);
+      // setImage(null);
       reset();
     }
   }, [isSubmitSuccessful, reset]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className={cn('min-w-[500px]', className)}>
+      <DialogContent className={cn('min-w-[500px] bg-teal-400 border-none', className)}>
         <DialogHeader>
           <DialogTitle className='text-3xl text-center'>TẠO MÓN</DialogTitle>
         </DialogHeader>
@@ -101,7 +93,7 @@ const CreateADish = (props: Props) => {
               )}
             />
 
-            <FormField
+            {/* <FormField
               control={control}
               name='thumbnail'
               render={({ field: { name, ref, onBlur, onChange } }) => (
@@ -123,7 +115,7 @@ const CreateADish = (props: Props) => {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> 
 
             {image && (
               <div className='md:max-w-[200px]'>
@@ -135,6 +127,7 @@ const CreateADish = (props: Props) => {
                 />
               </div>
             )}
+            */}
 
             <CategorySelect form={form} />
 
@@ -142,20 +135,12 @@ const CreateADish = (props: Props) => {
 
             <FormField
               control={control}
-              name='stock'
+              name='description'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Số lượng hàng trong kho</FormLabel>
+                  <FormLabel>Mô tả</FormLabel>
                   <FormControl>
-                    <Input
-                      type='number'
-                      min='1'
-                      max='1000'
-                      placeholder='Nhập số lượng hàng trong kho...'
-                      {...field}
-                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
-                      onBlur={onStockBlur}
-                    />
+                    <Input placeholder='Nhập mô tả...' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -22,8 +22,9 @@ import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import { cn } from '@/lib/utils';
 import { Props } from './CategorySelect.models';
 import { Input } from '../ui/input';
-import { createACategory } from '@/redux/categorySlice';
-import { v4 as uuidv4 } from 'uuid';
+import { addACategory } from '@/apis/category';
+import { CategoryType } from '@/types/category';
+import { escapeText } from '@/utils/text';
 import { toast } from 'react-toastify';
 
 const CategorySelect = (props: Props) => {
@@ -45,29 +46,33 @@ const CategorySelect = (props: Props) => {
 
   const categories = useAppSelector((state) => state.categoryStore.categories);
 
-  const onCategoryChange = (value: string) => {
-    if (getValues('categogy') === value) {
-      console.log('same value');
-      resetField('categogy');
+  const onCategoryChange = (value: number) => {
+    if (getValues('categoryId') === value) {
+      resetField('categoryId');
     } else {
-      console.log('set category');
-      setValue('categogy', value, { shouldDirty: true });
+      setValue('categoryId', value, { shouldDirty: true });
     }
   };
 
-  console.log({ isDirty, dirtyFields });
   const onAddCategorySubmit = (e: any) => {
     e.preventDefault();
 
-    if (newCategory) {
-      dispatch(
-        createACategory({
-          idCate: uuidv4(),
-          label: newCategory,
-        })
-      );
+    const cateNames = categories.map(({ name }: CategoryType) => escapeText(name));
 
-      setNewCategory('');
+    if (newCategory) {
+      if (!cateNames.includes(escapeText(newCategory))) {
+        addACategory(
+          {
+            name: newCategory,
+          },
+          dispatch
+        );
+
+        setNewCategory('');
+        setIsCreateCategory(false);
+      } else {
+        toast.error('Tên loại đã tồn tại! Hãy chọn tên khác!');
+      }
     }
   };
 
@@ -85,7 +90,7 @@ const CategorySelect = (props: Props) => {
     <>
       <FormField
         control={control}
-        name='categogy'
+        name='categoryId'
         render={({ field }) => (
           <div className={cn('w-full flex gap-3 items-end', className)}>
             <FormItem className='flex flex-col'>
@@ -102,8 +107,8 @@ const CategorySelect = (props: Props) => {
                       )}
                     >
                       {field.value
-                        ? categories.find((cate) => cate.value === field.value)
-                            ?.label
+                        ? categories.find((cate) => cate.id === field.value)
+                            ?.name
                         : 'Chọn loại...'}
                       <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
                     </Button>
@@ -116,15 +121,15 @@ const CategorySelect = (props: Props) => {
                     <CommandGroup>
                       {categories.map((cate) => (
                         <CommandItem
-                          value={cate.label}
-                          key={cate.value}
-                          onSelect={() => onCategoryChange(cate.value || '')}
+                          value={cate.id.toString()}
+                          key={cate.id}
+                          onSelect={() => onCategoryChange(cate.id)}
                         >
-                          {cate.label}
+                          {cate.name}
                           <Check
                             className={cn(
                               'ml-auto h-4 w-4',
-                              cate.value === field.value
+                              cate.id === field.value
                                 ? 'opacity-100'
                                 : 'opacity-0'
                             )}
@@ -143,7 +148,7 @@ const CategorySelect = (props: Props) => {
                 e.preventDefault();
                 setIsCreateCategory((pre) => !pre);
               }}
-              className={cn(errors.categogy?.message !== undefined && 'mb-7')}
+              className={cn(errors.categoryId?.message !== undefined && 'mb-7')}
             >
               Thêm loại
             </Button>

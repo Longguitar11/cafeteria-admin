@@ -22,6 +22,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { changePassword } from '@/apis/user';
+import { PasswordInput } from '@/components/PasswordInput';
 
 const ChangePassword = (props: Props) => {
   const { className = '' } = props;
@@ -65,45 +66,25 @@ const ChangePassword = (props: Props) => {
           ĐỔI MẬT KHẨU
         </p>
 
-        <FormField
+        <PasswordInput
           control={control}
           name='oldPassword'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Mật khẩu cũ</FormLabel>
-              <FormControl>
-                <Input
-                  type='password'
-                  placeholder='Nhập mật khẩu cũ...'
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label='Mật khẩu cũ'
+          placeholder='Nhập mật khẩu cũ...'
         />
 
-        <FormField
+        <PasswordInput
           control={control}
           name='newPassword'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Mật khẩu mới</FormLabel>
-              <FormControl>
-                <Input
-                  type='password'
-                  placeholder='Nhập mật khẩu mới...'
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label='Mật khẩu mới'
+          placeholder='Nhập mật khẩu mới...'
         />
 
         <div className='flex gap-3'>
           <Button variant='outline' className='flex-1'>
-            <Link href='/' className=''>Quay lại trang chủ</Link>
+            <Link href='/' className=''>
+              Quay lại trang chủ
+            </Link>
           </Button>
           <Button variant='primary' type='submit' className='flex-1'>
             Xác nhận

@@ -4,6 +4,7 @@ import { Roboto_Mono } from 'next/font/google';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import '../globals.css';
+import { AuthProvider } from '@/containers/Auth';
 
 const robotoMono = Roboto_Mono({ subsets: ['vietnamese'] });
 
@@ -18,30 +19,32 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang='vietnamese'>
-      <body className={robotoMono.className} suppressHydrationWarning={true}>
-        <Image
-          src='/images/admin-auth-img.jpg'
-          alt='Signin Image'
-          fill
-          priority
-        />
+    <AuthProvider>
+      <html lang='vietnamese'>
+        <body className={robotoMono.className} suppressHydrationWarning={true}>
+          <Image
+            src='/images/admin-auth-img.jpg'
+            alt='Signin Image'
+            fill
+            priority
+          />
 
-        <ToastContainer
-          position='top-right'
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme='light'
-        />
-        <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-cyan-400 bg-opacity-80 w-[500px] px-4 py-10 rounded'>
-          {children}
-        </div>
-      </body>
-    </html>
+          <ToastContainer
+            position='top-right'
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme='light'
+          />
+          <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-cyan-400 bg-opacity-80 w-[500px] px-4 py-10 rounded'>
+            {children}
+          </div>
+        </body>
+      </html>
+    </AuthProvider>
   );
 }

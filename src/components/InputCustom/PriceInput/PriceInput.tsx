@@ -38,8 +38,8 @@ const PriceInput = (props: Props) => {
             <Input
               className={className}
               type={priceType}
-              min='12000'
-              max='50000'
+              min='10000'
+              max='100000'
               placeholder='Nhập giá bán...'
               value={isFocusing ? value : getValueString(value.toString())}
               onBlur={onPriceInputBlur}

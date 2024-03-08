@@ -47,11 +47,11 @@ export const SignupSchema = z
     username: z
       .string()
       .min(4, { message: 'Tên đăng nhập phải có ít nhất 4 ký tự!' })
-      .max(15, 'Độ dài tên đăng nhập tối đa là 15!'),
+      .max(20, 'Độ dài tên đăng nhập tối đa là 20!'),
     password: z
       .string()
       .min(8, { message: 'Mật khẩu phải có ít nhất 8 ký tự!' })
-      .max(15, 'Độ dài mật khẩu tối đa là 15!')
+      .max(20, 'Độ dài mật khẩu tối đa là 20!')
       .regex(passwordValidation, {
         message:
           'Mật khẩu phải bao gồm 1 ký tự hoa, 1 ký tự thường, 1 chữ số và 1 ký tự đặc biệt!',
@@ -59,7 +59,7 @@ export const SignupSchema = z
     confirm: z
       .string()
       .min(8, { message: 'Mật khẩu phải có ít nhất 8 ký tự!' })
-      .max(15, 'Độ dài mật khẩu tối đa là 15!'),
+      .max(20, 'Độ dài mật khẩu tối đa là 20!'),
   })
   .refine((data) => data.password === data.confirm, {
     message: 'Mật khẩu không trùng khớp với nhau!',

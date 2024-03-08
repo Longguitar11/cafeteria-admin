@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Props } from './DishesManagement.models';
 import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import {
@@ -13,75 +13,76 @@ import {
 } from '@/components/ui/table';
 import { getValueString } from '@/utils/currency';
 import { CreateADish } from './CreateADish';
-import { createADish, deleteADish } from '@/redux/dishSlice';
 import { cn } from '@/lib/utils';
-import { v4 as uuidv4 } from 'uuid';
 import { AlertDialogCustom } from '@/components/AlertDialogCustom';
 import { EditADish } from './EditADish';
-import { DishForm } from '@/schemas/dish';
-import { DishInterface } from '@/types/dish';
-import Image from 'next/image';
+import { DishForm } from '@/schemas/product';
+// import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import {
+  addADish,
+  deleteADish,
+  editADish,
+  updateDishStatus,
+} from '@/apis/dish';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { dishStatus } from '@/constants/dishStatus';
+import { DishType } from '@/types/dish';
+import { escapeText } from '@/utils/text';
 import { toast } from 'react-toastify';
 
 const DishesManagement = (props: Props) => {
-  const { className = '' } = props;
+  const { className } = props;
 
   const dispatch = useAppDispatch();
 
-  const [dishId, setDishId] = useState<string>('');
-  const [selectedDish, setSelectedDish] = useState<DishInterface>({
-    idCate: '',
-    idDish: '',
-    name: '',
-    price: '0',
-    quantity: 0,
-    thumbnail: '',
-  });
-  const [createDishOpen, setCreateDishOpen] = useState<boolean>(false);
-  const [editDishOpen, setEditDishOpen] = useState<boolean>(false);
+  const [dishId, setDishId] = useState<number>(0);
+  const [isCreateDishOpen, setIsCreateDishOpen] = useState<boolean>(false);
+  const [isEditDishOpen, setIsEditDishOpen] = useState<boolean>(false);
 
-  const allDishes = useAppSelector((state) => state.dishStore.allDishes);
-  const categories = useAppSelector((state) => state.categoryStore.categories);
+  const dishes = useAppSelector((state) => state.dishStore.dishes);
 
   const onCreateADishSubmit = (values: DishForm) => {
     console.log({ values });
 
-    const { categogy, name, price, stock, thumbnail } = values;
+    const { categoryId, name, price, description } = values;
+    const dishNames = dishes.map(({ name }: DishType) => escapeText(name));
 
-    const selectedCategory = categories.find((cate) => cate.value === categogy);
-
-    if (values && selectedCategory) {
-      dispatch(
-        createADish({
-          idDish: uuidv4(),
-          idCate: selectedCategory.idCate,
+    if (!dishNames.includes(escapeText(name))) {
+      addADish(
+        {
+          categoryId,
           name,
-          price: price.toString(),
-          quantity: stock,
-          thumbnail: URL.createObjectURL(thumbnail),
-        })
+          price,
+          description,
+        },
+        dispatch
       );
 
-      setCreateDishOpen(false);
-    }
+      setIsCreateDishOpen(false);
+    } else toast.error('Tên loại đã tồn tại! Hãy chọn tên khác!');
   };
 
   const onEditADishSubmit = (values: DishForm) => {
     console.log({ values });
+
+    if (values) {
+      const { categoryId, name, description, price } = values;
+
+      editADish({ id: dishId, categoryId, name, description, price }, dispatch);
+
+      setIsEditDishOpen(false);
+    }
   };
 
-  useEffect(() => {
-    const dish = allDishes.find((dish) => dish.idDish === dishId);
-    if (dish) {
-      setSelectedDish((pre) =>
-        JSON.stringify(pre) !== JSON.stringify(dish) ? dish : pre
-      );
-    }
-  }, [allDishes, dishId]);
-
   return (
-    <section className={cn('p-10 h-full relative', className)}>
+    <section className={className}>
       <p className='text-gray-700 text-3xl font-medium uppercase border-b-[0.5px] border-gray-400'>
         QUẢN LÝ MÓN
       </p>
@@ -89,57 +90,75 @@ const DishesManagement = (props: Props) => {
       <Button
         variant='primary'
         className='my-4 float-right'
-        onClick={() => setCreateDishOpen(true)}
+        onClick={() => setIsCreateDishOpen(true)}
       >
         Tạo món
       </Button>
-      {allDishes.length > 0 ? (
+      {dishes.length > 0 ? (
         <div className='mt-10'>
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>STT</TableHead>
                 <TableHead>Tên</TableHead>
-                <TableHead>Ảnh</TableHead>
                 <TableHead>Loại</TableHead>
-                <TableHead>Hàng trong kho</TableHead>
+                {/* <TableHead>Ảnh</TableHead> */}
                 <TableHead>Giá</TableHead>
+                <TableHead>Mô tả</TableHead>
+                <TableHead>Trạng thái</TableHead>
                 <TableHead className='text-center'>Thao tác</TableHead>
               </TableRow>
             </TableHeader>
 
             <TableBody>
-              {allDishes.map((dish, index) => (
-                <TableRow key={dish.idDish}>
+              {dishes.map((dish, index) => (
+                <TableRow key={dish.id}>
                   <TableCell className='font-medium'>{index + 1}</TableCell>
 
                   <TableCell>{dish.name}</TableCell>
 
-                  <TableCell>
-                    {/* <ImageCustom thumbnail={dish.thumbnail} /> */}
-                    <div className={cn('relative w-14 h-14', className)}>
+                  {/* <TableCell> */}
+                  {/* <ImageCustom thumbnail={dish.thumbnail} /> */}
+                  {/* <div className={cn('relative w-14 h-14', className)}>
                       <Image src={dish.thumbnail} alt='thumbnail' fill />
                     </div>
+                  </TableCell> */}
+
+                  <TableCell>{dish.categoryName}</TableCell>
+                  <TableCell>{getValueString(dish.price.toString())}</TableCell>
+                  <TableCell>{dish.description}</TableCell>
+                  <TableCell>
+                    <Select
+                      value={dish.status}
+                      onValueChange={(value) =>
+                        updateDishStatus(
+                          { id: dish.id!, dishStatus: value },
+                          dispatch
+                        )
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='true'>Hoạt động</SelectItem>
+                        <SelectItem value='false'>Ngưng hoạt động</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </TableCell>
-
-                  <TableCell>{dish.category}</TableCell>
-                  <TableCell>{dish.quantity}</TableCell>
-
-                  <TableCell>{getValueString(dish.price)}</TableCell>
-
                   <TableCell>
                     <div className='flex justify-center gap-3'>
                       <AlertDialogCustom
                         buttonTitle='Xóa'
-                        onSubmit={() => dispatch(deleteADish(dish.idDish))}
+                        onSubmit={() => deleteADish(dish.id!, dispatch)}
                       />
 
                       <Button
                         variant='success'
                         onClick={() => {
-                          setEditDishOpen(true);
+                          setIsEditDishOpen(true);
                           setDishId((pre) =>
-                            pre !== dish.idDish ? dish.idDish : pre
+                            dish?.id && pre !== dish.id ? dish.id : pre
                           );
                         }}
                       >
@@ -158,19 +177,20 @@ const DishesManagement = (props: Props) => {
         </p>
       )}
 
-      {createDishOpen && (
+      {isCreateDishOpen && (
         <CreateADish
-          open={createDishOpen}
-          setOpen={setCreateDishOpen}
+          open={isCreateDishOpen}
+          setOpen={setIsCreateDishOpen}
           onSubmit={onCreateADishSubmit}
         />
       )}
 
-      {editDishOpen && (
+      {isEditDishOpen && (
         <EditADish
-          open={editDishOpen}
-          setOpen={setEditDishOpen}
-          selectedDish={selectedDish}
+          open={isEditDishOpen}
+          setOpen={setIsEditDishOpen}
+          dishes={dishes}
+          dishId={dishId}
           onSubmit={onEditADishSubmit}
         />
       )}

@@ -1,14 +1,19 @@
-import Image from "next/image";
+'use client';
+
+import { useAuthContext } from '@/containers/Auth/Auth.context';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function Home() {
-  return (
-    <main className="relative w-full h-full flex flex-col items-center justify-between p-24">
-      <Image
-        src="/images/home.jpg"
-        alt="home-image"
-        fill
-        priority
-      />
-    </main>
-  )
+  const router = useRouter();
+  const { token } = useAuthContext();
+
+  useEffect(() => {
+    if (!token) {
+      console.log('redirect to login');
+      router.replace('/signin');
+    } else router.replace('/users-management');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return <main></main>;
 }

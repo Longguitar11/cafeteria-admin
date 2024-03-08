@@ -1,4 +1,4 @@
-import { DishForm } from '@/schemas/product';
+import { CategoryForm } from '@/schemas/category';
 import {
   Dispatch,
   SetStateAction,
@@ -9,5 +9,5 @@ export interface Props {
   open: boolean;
   //
   setOpen: Dispatch<SetStateAction<boolean>>;
-  onSubmit: (value: DishForm) => void;
+  onSubmit: (value: CategoryForm) => void;
 }

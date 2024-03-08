@@ -9,11 +9,15 @@ export const ChangePasswordSchema = z
     oldPassword: z
       .string()
       .min(8, { message: 'Mật khẩu phải có ít nhất 8 ký tự!' })
-      .max(15, 'Độ dài mật khẩu tối đa là 15!'),
+      .max(20, 'Độ dài mật khẩu tối đa là 20!')
+      .regex(passwordValidation, {
+        message:
+          'Mật khẩu phải bao gồm 1 ký tự hoa, 1 ký tự thường, 1 chữ số và 1 ký tự đặc biệt!',
+      }),
     newPassword: z
       .string()
       .min(8, { message: 'Mật khẩu phải có ít nhất 8 ký tự!' })
-      .max(15, 'Độ dài mật khẩu tối đa là 15!')
+      .max(20, 'Độ dài mật khẩu tối đa là 20!')
       .regex(passwordValidation, {
         message:
           'Mật khẩu phải bao gồm 1 ký tự hoa, 1 ký tự thường, 1 chữ số và 1 ký tự đặc biệt!',

@@ -6,9 +6,8 @@ export interface Props {
     {
       name: string;
       price: number;
-      stock: number;
-      categogy: string;
-      thumbnail?: any;
+      categoryId: number;
+      description: string;
     },
     any,
     undefined

@@ -21,7 +21,7 @@ import { CategorySelect } from '../CategorySelect';
 import { PriceInput } from '../InputCustom';
 import { Button } from '../ui/button';
 import { useForm } from 'react-hook-form';
-import { DishForm, DishSchema } from '@/schemas/dish';
+import { DishForm, DishSchema } from '@/schemas/product';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 const DishForm = (props: Props) => {

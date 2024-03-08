@@ -3,8 +3,6 @@
 import { toast } from 'react-toastify';
 import Axios from './axiosConfig';
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
-import { Dispatch, UnknownAction } from '@reduxjs/toolkit';
 import { getAllUsers as getUsers } from '@/redux/userSlice';
 
 interface SignupRequest {
@@ -28,8 +26,6 @@ export const signup = async (data: SignupRequest) => {
     if (status >= 200 && status < 400) {
       toast.success('Đăng ký tài khoản thành công!');
       return true;
-    } else {
-      toast.error('Email đăng ký đã tồn tại!');
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -121,7 +117,7 @@ export const changePassword = async (data: ChangePasswordRequest) => {
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      toast.error(error.response?.data.message);
+      toast.error('Mật khẩu cũ không chính xác!');
     } else {
       toast.error('Đã xảy ra lỗi không mong muốn!');
     }
@@ -144,15 +140,27 @@ export const checkToken = async () => {
   }
 };
 
-export const activateUserAccount = async (id: number, dispatch: any) => {
+export type activateUserAccountRequest = {
+  id: number,
+  userStatus: string
+}
+
+export const activateUserAccount = async (
+  data: activateUserAccountRequest,
+  dispatch: any
+) => {
+  const { id, userStatus } = data;
+
   try {
-    const { status, data } = await Axios.post('/user/update', { id });
+    const { status, data } = await Axios.post('/user/update', {
+      id,
+      status: userStatus,
+    });
 
     console.log({ status, data });
 
     if (status >= 200 && status < 400) {
       toast.success(`Kích hoạt tài khoản thành công!`);
-
       getAllUsers(dispatch);
       return true;
     }

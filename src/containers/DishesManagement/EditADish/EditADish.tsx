@@ -16,37 +16,34 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Check, ChevronsUpDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { DialogTrigger } from '@radix-ui/react-dialog';
 import { useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
 import { Props } from './EditADish.models';
-import { useEffect, useState } from 'react';
-import { createACategory } from '@/redux/categorySlice';
-import Image from 'next/image';
-import { v4 as uuidv4 } from 'uuid';
-import { DishForm, DishSchema } from '@/schemas/dish';
+import { useEffect, useMemo, useState } from 'react';
+import { DishForm, DishSchema } from '@/schemas/product';
 import { CategorySelect } from '@/components/CategorySelect';
-import { useAppSelector } from '@/redux/hook';
 import { PriceInput } from '@/components/InputCustom';
 
 const EditADish = (props: Props) => {
-  const { className = '', open, setOpen, selectedDish, onSubmit } = props;
+  const { className = '', dishId, dishes, open, setOpen, onSubmit } = props;
 
-  const [image, setImage] = useState<File | null>(null);
+  // const [image, setImage] = useState<File | null>(null);
+
+  const selectedDish = useMemo(() => {
+    const dish = dishes.find((dish) => dish.id === dishId);
+    if (dish) return dish;
+  }, [dishId, dishes]);
 
   const form = useForm<DishForm>({
     resolver: zodResolver(DishSchema),
     mode: 'onSubmit',
     defaultValues: {
       name: '',
-      price: 12000,
-      categogy: '',
-      stock: 1,
-      thumbnail: '',
+      price: 10000,
+      categoryId: undefined,
+      description: '',
     },
   });
 
@@ -59,45 +56,37 @@ const EditADish = (props: Props) => {
     formState: { errors, isSubmitSuccessful, isValid },
   } = form;
 
-  const categories = useAppSelector((state) => state.categoryStore.categories);
-
-  const { name, price, thumbnail, quantity, idCate } = selectedDish;
-
-  const cateValue = categories.find((cate) => cate.idCate === idCate)?.value;
-
-  const onStockBlur = () => {
-    if (Number.isNaN(getValues('stock'))) setValue('stock', 1);
-  };
-
   const onResetClick = (e: any) => {
     e.preventDefault();
     if (isValid) {
       reset();
-      setImage(null);
+      // setImage(null);
     }
   };
 
   useEffect(() => {
-    setValue('name', name);
-    setValue('price', parseInt(price));
-    setValue('categogy', cateValue || '');
-    setValue('stock', quantity);
-    setValue('thumbnail', thumbnail);
+    if (selectedDish) {
+      const { categoryId, name, price, description } = selectedDish;
+      setValue('name', name);
+      setValue('price', price);
+      setValue('categoryId', categoryId);
+      setValue('description', description);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDish]);
 
   useEffect(() => {
     if (isSubmitSuccessful) {
       reset();
-      setImage(null);
+      // setImage(null);
     }
   }, [isSubmitSuccessful, reset]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className={cn('min-w-[500px]', className)}>
+      <DialogContent className={cn('min-w-[500px] bg-teal-400 border-none', className)}>
         <DialogHeader>
-          <DialogTitle className='text-3xl text-center'>TẠO MÓN</DialogTitle>
+          <DialogTitle className='text-3xl text-center'>SỬA MÓN</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
@@ -119,7 +108,7 @@ const EditADish = (props: Props) => {
               )}
             />
 
-            <FormField
+            {/* <FormField
               control={control}
               name='thumbnail'
               render={({ field: { name, ref, onBlur, onChange } }) => (
@@ -141,7 +130,7 @@ const EditADish = (props: Props) => {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> 
 
             {image && (
               <div className='md:max-w-[200px]'>
@@ -153,6 +142,7 @@ const EditADish = (props: Props) => {
                 />
               </div>
             )}
+            */}
 
             <CategorySelect form={form} />
 
@@ -160,20 +150,12 @@ const EditADish = (props: Props) => {
 
             <FormField
               control={control}
-              name='stock'
+              name='description'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Số lượng hàng trong kho</FormLabel>
+                  <FormLabel>Mô tả</FormLabel>
                   <FormControl>
-                    <Input
-                      type='number'
-                      min='1'
-                      max='1000'
-                      placeholder='Nhập số lượng hàng trong kho...'
-                      {...field}
-                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
-                      onBlur={onStockBlur}
-                    />
+                    <Input placeholder='Nhập mô tả...' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

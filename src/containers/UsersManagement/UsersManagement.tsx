@@ -10,11 +10,16 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { UserType } from '@/types/user';
-import { cn } from '@/lib/utils';
 import { AlertDialogCustom } from '@/components/AlertDialogCustom';
 import { Button } from '@/components/ui/button';
 import { useAppDispatch, useAppSelector } from '@/redux/hook';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 const UsersManagement = () => {
   const dispatch = useAppDispatch();
@@ -22,6 +27,7 @@ const UsersManagement = () => {
   const users = useAppSelector((state) => state.userStore.users);
 
   console.log({ users });
+
   useEffect(() => {
     getAllUsers(dispatch);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -54,15 +60,23 @@ const UsersManagement = () => {
 
                   <TableCell>{user.contactNumber}</TableCell>
                   <TableCell>
-                    {user.status === 'true' ? (
-                      <Button variant='success' disabled>
-                        Đã kích hoạt
-                      </Button>
-                    ) : (
-                      <Button variant='destructive' disabled>
-                        Chưa kích hoạt
-                      </Button>
-                    )}
+                    <Select
+                      value={user.status}
+                      onValueChange={(value) =>
+                        activateUserAccount(
+                          { id: user.id, userStatus: value },
+                          dispatch
+                        )
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='true'>Đã duyệt</SelectItem>
+                        <SelectItem value='false'>Chưa duyệt</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </TableCell>
 
                   <TableCell>
@@ -71,15 +85,6 @@ const UsersManagement = () => {
                         buttonTitle='Xóa'
                         onSubmit={() => {}}
                       />
-
-                      {user.status !== 'true' && (
-                        <Button
-                          variant='primary'
-                          onClick={() => activateUserAccount(user.id, dispatch)}
-                        >
-                          Kích hoạt
-                        </Button>
-                      )}
                     </div>
                   </TableCell>
                 </TableRow>

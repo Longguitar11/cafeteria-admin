@@ -8,9 +8,9 @@ export const store = () => {
   return configureStore({
     reducer: {
       orderStore: orderSlice,
+      userStore: userSlice,
       dishStore: dishSlice,
       categoryStore: categorySlice,
-      userStore: userSlice,
     },
   });
 };
