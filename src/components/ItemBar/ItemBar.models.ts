@@ -6,6 +6,6 @@ export interface Props {
   text: string;
   //
   onClick: MouseEventHandler<HTMLAnchorElement>;
-  onMouseOver: MouseEventHandler<HTMLAnchorElement>;
-  onMouseLeave: MouseEventHandler<HTMLAnchorElement>;
+  onMouseOver?: MouseEventHandler<HTMLAnchorElement>;
+  onMouseLeave?: MouseEventHandler<HTMLAnchorElement>;
 }

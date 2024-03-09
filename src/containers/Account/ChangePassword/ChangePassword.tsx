@@ -5,20 +5,14 @@ import { Props } from './ChangePassword.models';
 import { useForm } from 'react-hook-form';
 import {
   Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
 } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   ChangePasswordForm,
   ChangePasswordSchema,
 } from './ChangePassword.schemas';
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { changePassword } from '@/apis/user';
@@ -39,8 +33,6 @@ const ChangePassword = (props: Props) => {
     formState: { isValid },
   } = form;
 
-  const router = useRouter();
-
   const onSigninSubmit = ({ oldPassword, newPassword }: ChangePasswordForm) => {
     if (isValid) {
       console.log({ oldPassword, newPassword });
@@ -48,7 +40,7 @@ const ChangePassword = (props: Props) => {
 
       res
         .then((res) => {
-          if (res) router.replace('/signin');
+          if (res) redirect('/signin');
         })
         .catch((error) => {
           console.log(error);
@@ -82,7 +74,7 @@ const ChangePassword = (props: Props) => {
 
         <div className='flex gap-3'>
           <Button variant='outline' className='flex-1'>
-            <Link href='/' className=''>
+            <Link href='/'>
               Quay lại trang chủ
             </Link>
           </Button>

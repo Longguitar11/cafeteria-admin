@@ -35,8 +35,12 @@ const UsersManagement = () => {
 
   return (
     <>
+    <p className='text-gray-700 text-3xl font-medium uppercase border-b-[0.5px] border-gray-400'>
+        QUẢN LÝ NHÂN VIÊN
+      </p>
+
       {users.length > 0 ? (
-        <div className='mt-10'>
+        <div className='mt-4'>
           <Table>
             <TableHeader>
               <TableRow>

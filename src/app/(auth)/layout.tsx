@@ -1,10 +1,10 @@
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { Roboto_Mono } from 'next/font/google';
 import { Metadata } from 'next';
 import Image from 'next/image';
-import '../globals.css';
 import { AuthProvider } from '@/containers/Auth';
+import 'react-toastify/dist/ReactToastify.css';
+import '../globals.css';
 
 const robotoMono = Roboto_Mono({ subsets: ['vietnamese'] });
 

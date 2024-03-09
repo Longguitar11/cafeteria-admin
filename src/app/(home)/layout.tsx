@@ -44,7 +44,7 @@ export default function RootLayout({
               pauseOnHover
               theme='light'
             />
-            <div className='absolute left-72 w-[calc(100%-288px)] min-h-[calc(100%-80px)] p-4 mt-20 bg-sky-100 z-[-1]'>
+            <div className='sm:absolute left-72 w-full sm:w-[calc(100%-288px)] min-h-[calc(100%-80px)] p-4 sm:mt-20 bg-sky-100 z-[-1]'>
               {children}
             </div>
           </body>
