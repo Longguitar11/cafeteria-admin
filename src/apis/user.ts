@@ -192,3 +192,24 @@ export const getAllUsers = async (dispatch: any) => {
     }
   }
 };
+
+// DELETE USER
+
+export const deleteAUser = async (id: number, dispatch: any) => {
+  try {
+    const { status, data } = await Axios.post(`/user/delete/${id}`);
+
+    console.log({ status, data });
+
+    if (status >= 200 && status < 400) {
+      getAllUsers(dispatch);
+      toast.success('Xóa người dùng thành công!')
+    } 
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      toast.error(error.response?.data.message);
+    } else {
+      toast.error('Đã xảy ra lỗi không mong muốn!');
+    }
+  }
+};

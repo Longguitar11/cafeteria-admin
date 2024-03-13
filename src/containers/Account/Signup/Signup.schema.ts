@@ -11,32 +11,11 @@ const passwordValidation = new RegExp(
 export const SignupSchema = z
   .object({
     email: z.string().email('Vui lòng nhập đúng định dạng email!'),
-    phoneNumber: z
+    contactNumber: z
       .string()
       .min(10, 'SĐT phải chứa 10 số!')
       .max(10, 'SĐT phải chứa 10 số!')
       .superRefine((val, ctx) => {
-        // if (val.length < 10) {
-        //   ctx.addIssue({
-        //     code: z.ZodIssueCode.too_small,
-        //     minimum: 10,
-        //     message: 'SĐT phải chứa 10 số!',
-        //     inclusive: true,
-        //     type: 'string',
-        //     fatal: true,
-        //   });
-        // }
-        // if (val.length > 10) {
-        //   ctx.addIssue({
-        //     code: z.ZodIssueCode.too_big,
-        //     maximum: 10,
-        //     message: 'SĐT phải chứa 10 số!',
-        //     inclusive: true,
-        //     type: 'string',
-        //     fatal: true,
-        //   });
-        // }
-
         if (!phoneRegex.test(val)) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
@@ -44,10 +23,10 @@ export const SignupSchema = z
           });
         }
       }),
-    username: z
+    name: z
       .string()
-      .min(4, { message: 'Tên đăng nhập phải có ít nhất 4 ký tự!' })
-      .max(20, 'Độ dài tên đăng nhập tối đa là 20!'),
+      .min(4, { message: 'Tên phải có ít nhất 4 ký tự!' })
+      .max(20, 'Độ dài tên tối đa là 20!'),
     password: z
       .string()
       .min(8, { message: 'Mật khẩu phải có ít nhất 8 ký tự!' })

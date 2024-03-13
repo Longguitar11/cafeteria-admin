@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Props } from './DishesManagement.models';
 import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import {
@@ -13,7 +13,6 @@ import {
 } from '@/components/ui/table';
 import { getValueString } from '@/utils/currency';
 import { CreateADish } from './CreateADish';
-import { cn } from '@/lib/utils';
 import { AlertDialogCustom } from '@/components/AlertDialogCustom';
 import { EditADish } from './EditADish';
 import { DishForm } from '@/schemas/product';
@@ -23,6 +22,7 @@ import {
   addADish,
   deleteADish,
   editADish,
+  getAllDishes,
   updateDishStatus,
 } from '@/apis/dish';
 import {
@@ -32,21 +32,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { dishStatus } from '@/constants/dishStatus';
 import { DishType } from '@/types/dish';
 import { escapeText } from '@/utils/text';
 import { toast } from 'react-toastify';
+import { DishFilter } from '@/components/Filter/DishFilter';
 
 const DishesManagement = (props: Props) => {
   const { className } = props;
 
   const dispatch = useAppDispatch();
 
+  const allDishes = useAppSelector((state) => state.dishStore.dishes);
+
   const [dishId, setDishId] = useState<number>(0);
+  const [dishes, setDishes] = useState<DishType[]>(allDishes);
   const [isCreateDishOpen, setIsCreateDishOpen] = useState<boolean>(false);
   const [isEditDishOpen, setIsEditDishOpen] = useState<boolean>(false);
-
-  const dishes = useAppSelector((state) => state.dishStore.dishes);
 
   const onCreateADishSubmit = (values: DishForm) => {
     console.log({ values });
@@ -66,7 +67,7 @@ const DishesManagement = (props: Props) => {
       );
 
       setIsCreateDishOpen(false);
-    } else toast.error('Tên loại đã tồn tại! Hãy chọn tên khác!');
+    } else toast.error('Tên món đã tồn tại! Hãy chọn tên khác!');
   };
 
   const onEditADishSubmit = (values: DishForm) => {
@@ -81,6 +82,11 @@ const DishesManagement = (props: Props) => {
     }
   };
 
+  useEffect(() => {
+    getAllDishes(dispatch);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <section className={className}>
       <p className='text-gray-700 text-3xl font-medium uppercase border-b-[0.5px] border-gray-400'>
@@ -94,83 +100,102 @@ const DishesManagement = (props: Props) => {
       >
         Tạo món
       </Button>
-      {dishes.length > 0 ? (
-        <div className='mt-10'>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>STT</TableHead>
-                <TableHead>Tên</TableHead>
-                <TableHead>Loại</TableHead>
-                {/* <TableHead>Ảnh</TableHead> */}
-                <TableHead>Giá</TableHead>
-                <TableHead>Mô tả</TableHead>
-                <TableHead>Trạng thái</TableHead>
-                <TableHead className='text-center'>Thao tác</TableHead>
-              </TableRow>
-            </TableHeader>
 
-            <TableBody>
-              {dishes.map((dish, index) => (
-                <TableRow key={dish.id}>
-                  <TableCell className='font-medium'>{index + 1}</TableCell>
+      {allDishes.length > 0 ? (
+        <>
+          <DishFilter
+            allDishes={allDishes}
+            dishes={dishes}
+            setDishes={setDishes}
+            className='mt-20'
+          />
+          {dishes.length > 0 ? (
+            <div className='mt-4'>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>STT</TableHead>
+                    <TableHead>Tên</TableHead>
+                    <TableHead>Loại</TableHead>
+                    {/* <TableHead>Ảnh</TableHead> */}
+                    <TableHead>Giá</TableHead>
+                    <TableHead>Mô tả</TableHead>
+                    <TableHead>Trạng thái</TableHead>
+                    <TableHead className='text-center'>Thao tác</TableHead>
+                  </TableRow>
+                </TableHeader>
 
-                  <TableCell>{dish.name}</TableCell>
+                <TableBody>
+                  {dishes.map((dish, index) => (
+                    <TableRow key={dish.id}>
+                      <TableCell className='font-medium'>{index + 1}</TableCell>
 
-                  {/* <TableCell> */}
-                  {/* <ImageCustom thumbnail={dish.thumbnail} /> */}
-                  {/* <div className={cn('relative w-14 h-14', className)}>
+                      <TableCell>{dish.name}</TableCell>
+
+                      {/* <TableCell> */}
+                      {/* <ImageCustom thumbnail={dish.thumbnail} /> */}
+                      {/* <div className={cn('relative w-14 h-14', className)}>
                       <Image src={dish.thumbnail} alt='thumbnail' fill />
                     </div>
                   </TableCell> */}
 
-                  <TableCell>{dish.categoryName}</TableCell>
-                  <TableCell>{getValueString(dish.price.toString())}</TableCell>
-                  <TableCell>{dish.description}</TableCell>
-                  <TableCell>
-                    <Select
-                      value={dish.status}
-                      onValueChange={(value) =>
-                        updateDishStatus(
-                          { id: dish.id!, dishStatus: value },
-                          dispatch
-                        )
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value='true'>Hoạt động</SelectItem>
-                        <SelectItem value='false'>Ngưng hoạt động</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </TableCell>
-                  <TableCell>
-                    <div className='flex justify-center gap-3'>
-                      <AlertDialogCustom
-                        buttonTitle='Xóa'
-                        onSubmit={() => deleteADish(dish.id!, dispatch)}
-                      />
+                      <TableCell>{dish.categoryName}</TableCell>
+                      <TableCell>
+                        {getValueString(dish.price.toString())}
+                      </TableCell>
+                      <TableCell>{dish.description}</TableCell>
+                      <TableCell>
+                        <Select
+                          value={dish.status}
+                          onValueChange={(value) =>
+                            updateDishStatus(
+                              { id: dish.id!, dishStatus: value },
+                              dispatch
+                            )
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value='true'>Hoạt động</SelectItem>
+                            <SelectItem value='false'>
+                              Ngưng hoạt động
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell>
+                        <div className='flex justify-center gap-3'>
+                          <AlertDialogCustom
+                            buttonTitle='Xóa'
+                            onSubmit={() => deleteADish(dish.id!, dispatch)}
+                          />
 
-                      <Button
-                        variant='success'
-                        onClick={() => {
-                          setIsEditDishOpen(true);
-                          setDishId((pre) =>
-                            dish?.id && pre !== dish.id ? dish.id : pre
-                          );
-                        }}
-                      >
-                        Chỉnh sửa
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+                          <Button
+                            variant='success'
+                            onClick={() => {
+                              setIsEditDishOpen(true);
+                              setDishId((pre) =>
+                                dish?.id && pre !== dish.id ? dish.id : pre
+                              );
+                            }}
+                          >
+                            Chỉnh sửa
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          ) : (
+            <p className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl text-red-500 font-medium'>
+              Không tìm ra món nào!
+            </p>
+          )}
+        </>
       ) : (
         <p className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl text-red-500 font-medium'>
           Danh sách món trống!

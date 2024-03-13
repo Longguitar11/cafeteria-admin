@@ -11,7 +11,7 @@ export default function Home() {
     if (!token) {
       console.log('redirect to login');
       redirect('/signin');
-    } else redirect('/users-management');
+    } else redirect('/staff-management');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return <main></main>;

@@ -17,12 +17,9 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
 import { signup } from '@/apis/user';
-import { isBoolean } from 'lodash';
-import { error } from 'console';
 import { cn } from '@/lib/utils';
-import { PasswordInput } from '@/components/PasswordInput';
+import { PasswordInput } from '@/components/InputCustom/PasswordInput';
 
 const Signup = (props: Props) => {
   const { className = '' } = props;
@@ -34,8 +31,8 @@ const Signup = (props: Props) => {
     mode: 'onSubmit',
     defaultValues: {
       email: '',
-      phoneNumber: '',
-      username: '',
+      contactNumber: '',
+      name: '',
       password: '',
       confirm: '',
     },
@@ -49,16 +46,16 @@ const Signup = (props: Props) => {
 
   const onSignupSubmit = ({
     email,
-    phoneNumber,
-    username,
+    contactNumber,
+    name,
     password,
   }: SignupForm) => {
-    console.log({ email, phoneNumber, username, password });
+    console.log({ email, contactNumber, name, password });
     if (isValid) {
       const res = signup({
         email,
-        name: username,
-        contactNumber: phoneNumber,
+        name,
+        contactNumber,
         password,
       });
 
@@ -98,7 +95,7 @@ const Signup = (props: Props) => {
 
         <FormField
           control={control}
-          name='phoneNumber'
+          name='contactNumber'
           render={({ field }) => (
             <FormItem>
               <FormLabel>Số điện thoại</FormLabel>
@@ -112,7 +109,7 @@ const Signup = (props: Props) => {
 
         <FormField
           control={control}
-          name='username'
+          name='name'
           render={({ field }) => (
             <FormItem>
               <FormLabel>Tên đăng nhập</FormLabel>

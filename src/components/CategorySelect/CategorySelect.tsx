@@ -47,17 +47,16 @@ const CategorySelect = (props: Props) => {
   const categories = useAppSelector((state) => state.categoryStore.categories);
 
   const onCategoryChange = (value: number) => {
-    if (getValues('categoryId') === value) {
-      resetField('categoryId');
-    } else {
-      setValue('categoryId', value, { shouldDirty: true });
-    }
+    if (getValues('categoryId') === value) resetField('categoryId');
+    else setValue('categoryId', value, { shouldDirty: true });
   };
 
   const onAddCategorySubmit = (e: any) => {
     e.preventDefault();
 
-    const cateNames = categories.map(({ name }: CategoryType) => escapeText(name));
+    const cateNames = categories.map(({ name }: CategoryType) =>
+      escapeText(name)
+    );
 
     if (newCategory) {
       if (!cateNames.includes(escapeText(newCategory))) {
@@ -121,7 +120,7 @@ const CategorySelect = (props: Props) => {
                     <CommandGroup>
                       {categories.map((cate) => (
                         <CommandItem
-                          value={cate.id.toString()}
+                          value={cate.value}
                           key={cate.id}
                           onSelect={() => onCategoryChange(cate.id)}
                         >

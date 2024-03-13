@@ -1,7 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { DropdownType } from '@/types/dropdown';
-import { calculateProductQuantity } from './Dropdown.utils';
-import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 const Dropdown = (props: DropdownType) => {
@@ -20,7 +18,7 @@ const Dropdown = (props: DropdownType) => {
           onMouseOver={onMouseOver}
           onMouseLeave={onMouseLeave}
           onClick={() => {
-            item.url ? onClick(item.url) : onClick(item.id);
+            onClick(item.url!)
           }}
           className={cn(
             'cursor-pointer p-3 text-gray-800 hover:bg-white transition-all duration-200',
@@ -28,16 +26,7 @@ const Dropdown = (props: DropdownType) => {
             index === 0 && 'rounded-tl rounded-tr'
           )}
         >
-          {item.label}{' '}
-          {item.url ? (
-            ''
-          ) : (
-            <span className='text-red-500'>
-              {calculateProductQuantity(item.id)
-                ? `(${calculateProductQuantity(item.id)})`
-                : '(0)'}
-            </span>
-          )}
+          {item.label}
         </div>
       ))}
     </div>

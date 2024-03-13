@@ -3,7 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import { Props } from './CategoriesManagement.models';
 import { useAppDispatch, useAppSelector } from '@/redux/hook';
-import { addACategory, editACategory, getAllCategories } from '@/apis/category';
+import {
+  addACategory,
+  deleteACategory,
+  editACategory,
+  getAllCategories,
+} from '@/apis/category';
 
 import {
   Table,
@@ -87,7 +92,10 @@ const CategoriesManagement = (props: Props) => {
 
                 <TableCell>
                   <div className='flex justify-center gap-3'>
-                    <AlertDialogCustom buttonTitle='Xóa' onSubmit={() => {}} />
+                    <AlertDialogCustom
+                      buttonTitle='Xóa'
+                      onSubmit={() => deleteACategory(cate.id, dispatch)}
+                    />
 
                     <Button
                       variant='primary'

@@ -9,7 +9,7 @@ import '../globals.css';
 const robotoMono = Roboto_Mono({ subsets: ['vietnamese'] });
 
 export const metadata: Metadata = {
-  title: 'Cafeteria',
+  title: 'Admin',
   description: '',
 };
 
@@ -22,12 +22,9 @@ export default function AuthLayout({
     <AuthProvider>
       <html lang='vietnamese'>
         <body className={robotoMono.className} suppressHydrationWarning={true}>
-          <Image
-            src='/images/admin-auth-img.jpg'
-            alt='Signin Image'
-            fill
-            priority
-          />
+          <div className='relative w-screen h-screen'>
+            <Image src='/images/admin-auth-img.jpg' alt='Signin Image' fill />
+          </div>
 
           <ToastContainer
             position='top-right'

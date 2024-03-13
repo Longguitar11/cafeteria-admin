@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { changePassword } from '@/apis/user';
-import { PasswordInput } from '@/components/PasswordInput';
+import { PasswordInput } from '@/components/InputCustom/PasswordInput';
 
 const ChangePassword = (props: Props) => {
   const { className = '' } = props;

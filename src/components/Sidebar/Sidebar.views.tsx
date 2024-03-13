@@ -1,9 +1,9 @@
 import React from 'react';
-import { OptionsType } from './Sidebar.models';
 import { cn } from '@/lib/utils';
+import { sideBar } from '@/constants/sidebar';
+import { OptionsType } from './Sidebar.models';
 import { ItemBar } from '../ItemBar';
 import './style.css';
-import { sideBar } from '@/constants/sidebar';
 
 export const Options = (props: OptionsType) => {
   const { className = '', isOpen, setIsOpen } = props;

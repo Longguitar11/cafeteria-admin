@@ -1,9 +1,6 @@
 'use client';
 
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { CategoryType } from '@/types/category';
-import { escapeText } from '@/utils/text';
-import { toast } from 'react-toastify';
 import { UserType } from '@/types/user';
 
 export interface UserState {
@@ -21,7 +18,7 @@ const UsersSlice = createSlice({
   initialState,
   reducers: {
     getAllUsers: (state, action: PayloadAction<UserType[]>) => {
-      state.users = [...action.payload];
+      state.users = action.payload;
 
       localStorage.setItem('allUsers', JSON.stringify(state.users));
     },

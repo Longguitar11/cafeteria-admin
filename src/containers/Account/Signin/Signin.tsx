@@ -19,7 +19,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { signin } from '@/apis/user';
 import { cn } from '@/lib/utils';
-import { PasswordInput } from '@/components/PasswordInput';
+import { PasswordInput } from '@/components/InputCustom/PasswordInput';
 
 const Signin = (props: Props) => {
   const { className = '' } = props;

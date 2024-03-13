@@ -1,1 +1,2 @@
-export { default as Filter } from './Filter'
+export { DishFilter } from './DishFilter'
+export { StaffFilter } from './StaffFilter'

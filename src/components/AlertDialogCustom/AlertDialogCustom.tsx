@@ -9,7 +9,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '../ui/alert-dialog';
-import { Button } from '../ui/button';
+import { Button, buttonVariants } from '../ui/button';
 import { Props } from './AlertDialogCustom.models';
 
 const AlertDialogCustom = (props: Props) => {
@@ -33,7 +33,7 @@ const AlertDialogCustom = (props: Props) => {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Quay lại</AlertDialogCancel>
-          <AlertDialogAction onClick={onSubmit}>Đồng ý</AlertDialogAction>
+          <AlertDialogAction className={buttonVariants({variant: "destructive"})} onClick={onSubmit}>Đồng ý</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -27,7 +27,7 @@ export default function RootLayout({
         <html lang='vietnamese'>
           <body
             suppressHydrationWarning={true}
-            className={cn('static', robotoMono.className)}
+            className={robotoMono.className}
           >
             <Header />
 
@@ -44,7 +44,7 @@ export default function RootLayout({
               pauseOnHover
               theme='light'
             />
-            <div className='sm:absolute left-72 w-full sm:w-[calc(100%-288px)] min-h-[calc(100%-80px)] p-4 sm:mt-20 bg-sky-100 z-[-1]'>
+            <div className='sm:absolute left-72 w-full sm:w-[calc(100%-288px)] min-h-[calc(100vh-80px)] p-4 sm:mt-20 bg-sky-100'>
               {children}
             </div>
           </body>
