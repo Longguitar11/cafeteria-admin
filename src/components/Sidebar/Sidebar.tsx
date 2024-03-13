@@ -32,11 +32,16 @@ const Sidebar = () => {
   }, [expriredToken]);
 
   useEffect(() => {
+    setSeletectedItem(pathname)
+  }, [pathname])
+
+  useEffect(() => {
     if (!token) {
       redirect('/signin');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
   return (
     <section

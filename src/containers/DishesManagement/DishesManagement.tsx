@@ -82,6 +82,11 @@ const DishesManagement = (props: Props) => {
     }
   };
 
+  // set dish when all dishes updated
+  useEffect(() => {
+    setDishes(allDishes);
+  }, [allDishes]);
+
   useEffect(() => {
     getAllDishes(dispatch);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -109,24 +114,24 @@ const DishesManagement = (props: Props) => {
             setDishes={setDishes}
             className='mt-20'
           />
-          {dishes.length > 0 ? (
-            <div className='mt-4'>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>STT</TableHead>
-                    <TableHead>Tên</TableHead>
-                    <TableHead>Loại</TableHead>
-                    {/* <TableHead>Ảnh</TableHead> */}
-                    <TableHead>Giá</TableHead>
-                    <TableHead>Mô tả</TableHead>
-                    <TableHead>Trạng thái</TableHead>
-                    <TableHead className='text-center'>Thao tác</TableHead>
-                  </TableRow>
-                </TableHeader>
+          <div className='mt-4'>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>STT</TableHead>
+                  <TableHead>Tên</TableHead>
+                  <TableHead>Loại</TableHead>
+                  {/* <TableHead>Ảnh</TableHead> */}
+                  <TableHead>Giá</TableHead>
+                  <TableHead>Mô tả</TableHead>
+                  <TableHead>Trạng thái</TableHead>
+                  <TableHead className='text-center'>Thao tác</TableHead>
+                </TableRow>
+              </TableHeader>
 
-                <TableBody>
-                  {dishes.map((dish, index) => (
+              <TableBody>
+                {dishes.length > 0 ? (
+                  dishes.map((dish, index) => (
                     <TableRow key={dish.id}>
                       <TableCell className='font-medium'>{index + 1}</TableCell>
 
@@ -186,15 +191,20 @@ const DishesManagement = (props: Props) => {
                         </div>
                       </TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          ) : (
-            <p className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl text-red-500 font-medium'>
-              Không tìm ra món nào!
-            </p>
-          )}
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={7}
+                      className='text-red-500 text-xl text-center'
+                    >
+                      Không tìm ra món!
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </>
       ) : (
         <p className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl text-red-500 font-medium'>

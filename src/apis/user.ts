@@ -141,9 +141,9 @@ export const checkToken = async () => {
 };
 
 export type activateUserAccountRequest = {
-  id: number,
-  userStatus: string
-}
+  id: number;
+  userStatus: string;
+};
 
 export const activateUserAccount = async (
   data: activateUserAccountRequest,
@@ -160,7 +160,9 @@ export const activateUserAccount = async (
     console.log({ status, data });
 
     if (status >= 200 && status < 400) {
-      toast.success(`Kích hoạt tài khoản thành công!`);
+      if (userStatus === 'true') toast.success(`Tài khoản đã được duyệt!`);
+      else toast.success(`Tài khoản đã bỏ duyệt!`);
+
       getAllUsers(dispatch);
       return true;
     }
@@ -203,8 +205,8 @@ export const deleteAUser = async (id: number, dispatch: any) => {
 
     if (status >= 200 && status < 400) {
       getAllUsers(dispatch);
-      toast.success('Xóa người dùng thành công!')
-    } 
+      toast.success('Xóa người dùng thành công!');
+    }
   } catch (error) {
     if (axios.isAxiosError(error)) {
       toast.error(error.response?.data.message);

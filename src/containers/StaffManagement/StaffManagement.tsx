@@ -30,6 +30,11 @@ const StaffManagement = (props: Props) => {
 
   const [filteredStaff, setFilteredStaff] = useState<UserType[]>(allStaff);
 
+  // set filtered Staff when all staff updated
+  useEffect(() => {
+    setFilteredStaff(allStaff);
+  }, [allStaff]);
+
   useEffect(() => {
     getAllUsers(dispatch);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -104,7 +109,9 @@ const StaffManagement = (props: Props) => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell className='text-red-500'>Không tìm ra nhân viên!</TableCell>
+                  <TableCell colSpan={6} className='text-red-500 text-xl text-center'>
+                    Không tìm ra nhân viên!
+                  </TableCell>
                 </TableRow>
               )}
             </TableBody>

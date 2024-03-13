@@ -12,6 +12,7 @@ export const getAllDishes = async (dispatch: any) => {
 
     console.log({ status, data });
     if (status >= 200 && status < 400) {
+      console.log('store dish to dishSlice')
       dispatch(getDishes(data));
     } else {
       toast.error('Chỉ admin mới có thể thực hiện thao tác này!');

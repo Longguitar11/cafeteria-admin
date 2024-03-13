@@ -23,16 +23,19 @@ import {
 import { OrderInterface, OrderedDishInterface } from '@/types/order';
 import { deleteABill, getBills } from '@/apis/order';
 import { AlertDialogCustom } from '@/components/AlertDialogCustom';
+import { Badge } from '@/components/ui/badge';
+import { OrderFilter } from '@/components/Filter';
 
 const OrdersManagement = (props: Props) => {
   const { className } = props;
 
   const dispatch = useAppDispatch();
 
+  const allOrders = useAppSelector((state) => state.orderStore.allOrders);
+
+  const [filteredOrders, setFilteredOrders] = useState<OrderInterface[]>([]);
   const [isShowViewOrder, setIsShowViewOrder] = useState<boolean>(false);
   const [orderId, setOrderId] = useState<number>(0);
-
-  const allOrders = useAppSelector((state) => state.orderStore.allOrders);
 
   const sortedAllOrders: OrderInterface[] = useMemo(() => {
     const copiedArr = JSON.parse(JSON.stringify(allOrders));
@@ -43,6 +46,11 @@ const OrdersManagement = (props: Props) => {
     const selectedOrder = allOrders.find((order) => order.id === orderId);
     if (selectedOrder) return selectedOrder;
   }, [orderId, allOrders]);
+
+  // set filtered orders when all orders updated
+  useEffect(() => {
+    setFilteredOrders(allOrders);
+  }, [allOrders]);
 
   useEffect(() => {
     getBills(dispatch);
@@ -56,79 +64,110 @@ const OrdersManagement = (props: Props) => {
       </p>
 
       {sortedAllOrders.length > 0 ? (
-        <Table className='mt-10'>
-          <TableHeader>
-            <TableRow>
-              <TableHead className=''>Id</TableHead>
-              <TableHead>Email nhân viên</TableHead>
-              <TableHead>Tên khách hàng</TableHead>
-              {/* <TableHead className='w-20'>Ảnh</TableHead> */}
-              <TableHead className=''>SĐT khách hàng</TableHead>
-              <TableHead className=''>Email khách hàng</TableHead>
-              <TableHead className=''>Chi tiết đơn hàng</TableHead>
-              <TableHead className=''>Hình thức thanh toán</TableHead>
-              <TableHead className=''>Thành tiền</TableHead>
-              <TableHead className=''>Thao tác</TableHead>
-            </TableRow>
-          </TableHeader>
+        <>
+          <OrderFilter
+            allOrders={allOrders}
+            orders={filteredOrders}
+            setOrders={setFilteredOrders}
+            className='mt-4'
+          />
 
-          <TableBody className=''>
-            {sortedAllOrders.map((order) => {
-              const {
-                id,
-                uuid,
-                contactNumber,
-                createdBy,
-                email,
-                name,
-                paymentMethod,
-                total,
-              } = order;
+          <Table className='mt-10'>
+            <TableHeader>
+              <TableRow className='whitespace-nowrap'>
+                <TableHead className=''>Id</TableHead>
+                <TableHead>Email NV</TableHead>
+                <TableHead>Tên KH</TableHead>
+                {/* <TableHead className='w-20'>Ảnh</TableHead> */}
+                <TableHead className=''>SĐT KH</TableHead>
+                <TableHead className=''>Email KH</TableHead>
+                <TableHead className=''>Chi tiết đơn hàng</TableHead>
+                <TableHead className=''>Hình thức thanh toán</TableHead>
+                <TableHead className=''>Thành tiền</TableHead>
+                <TableHead className=''>Thao tác</TableHead>
+              </TableRow>
+            </TableHeader>
 
-              return (
-                <TableRow key={uuid}>
-                  <TableCell className='font-medium'>{id}</TableCell>
-                  <TableCell>{createdBy}</TableCell>
-                  <TableCell>{name}</TableCell>
+            <TableBody className=''>
+              {filteredOrders.length > 0 ? (
+                filteredOrders.map((order) => {
+                  const {
+                    id,
+                    uuid,
+                    contactNumber,
+                    createdBy,
+                    email,
+                    name,
+                    paymentMethod,
+                    total,
+                  } = order;
 
-                  {/* <TableCell className='w-20'>
+                  return (
+                    <TableRow key={uuid}>
+                      <TableCell className='font-medium'>{id}</TableCell>
+                      <TableCell>{createdBy}</TableCell>
+                      <TableCell>{name}</TableCell>
+
+                      {/* <TableCell className='w-20'>
                         <div className='relative w-14 h-14'>
                           <Image src={dish.thumbnail} alt='thumbnail' fill />
                         </div>
                       </TableCell> */}
 
-                  <TableCell className=''>{contactNumber}</TableCell>
+                      <TableCell className=''>{contactNumber}</TableCell>
 
-                  <TableCell className=''>{email}</TableCell>
+                      <TableCell className=''>{email}</TableCell>
 
-                  <TableCell className=''>
-                    <Button
-                      variant='primary'
-                      onClick={() => {
-                        setIsShowViewOrder(true);
-                        setOrderId(id);
-                      }}
-                    >
-                      Xem chi tiết
-                    </Button>
-                  </TableCell>
+                      <TableCell className=''>
+                        <Button
+                          variant='primary'
+                          onClick={() => {
+                            setIsShowViewOrder(true);
+                            setOrderId(id);
+                          }}
+                        >
+                          Xem chi tiết
+                        </Button>
+                      </TableCell>
 
-                  <TableCell className=''>
-                    {paymentMethod === 'CASH' ? 'Tiền mặt' : 'Chuyển khoản'}
-                  </TableCell>
+                      <TableCell className=''>
+                        <Badge
+                          className='w-full'
+                          variant={
+                            paymentMethod === 'CASH' ? 'destructive' : 'default'
+                          }
+                        >
+                          {paymentMethod === 'CASH'
+                            ? 'Tiền mặt'
+                            : 'Chuyển khoản'}
+                        </Badge>
+                      </TableCell>
 
-                  <TableCell>{getValueString(total.toString())}</TableCell>
-                  <TableCell>
-                    <AlertDialogCustom
-                      buttonTitle='xóa'
-                      onSubmit={() => deleteABill(id, dispatch)}
-                    />
+                      <TableCell className='font-medium'>
+                        {getValueString(total.toString())}
+                      </TableCell>
+                      <TableCell>
+                        <AlertDialogCustom
+                          buttonTitle='xóa'
+                          onSubmit={() => deleteABill(id, dispatch)}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={9}
+                    className='text-red-500 text-xl text-center'
+                  >
+                    Không tìm ra đơn hàng!
                   </TableCell>
                 </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+              )}
+            </TableBody>
+          </Table>
+        </>
       ) : (
         <p>Lịch sử giao dịch trống!</p>
       )}

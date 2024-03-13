@@ -28,7 +28,7 @@ const StaffFilter = (props: Props) => {
     <div className={cn('flex gap-3', className)}>
       <Input
         type='text'
-        placeholder='Tìm người dùng (tên, sđt, email)...'
+        placeholder='Tìm nhân viên (tên, sđt, email)...'
         className='text-base'
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}

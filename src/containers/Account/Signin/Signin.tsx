@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { SigninForm, SigninSchema } from './Signin.schema';
 import { Props } from './Signin.models';
@@ -16,13 +16,16 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { signin } from '@/apis/user';
 import { cn } from '@/lib/utils';
 import { PasswordInput } from '@/components/InputCustom/PasswordInput';
+import { useAuthContext } from '@/containers/Auth/Auth.context';
 
 const Signin = (props: Props) => {
   const { className = '' } = props;
+
+  const { token } = useAuthContext();
 
   const form = useForm<SigninForm>({
     resolver: zodResolver(SigninSchema),
@@ -45,13 +48,17 @@ const Signin = (props: Props) => {
 
       res
         .then((res) => {
-          if (res) router.replace('/users-management');
+          if (res) router.replace('/');
         })
         .catch((error) => {
           console.log(error);
         });
     }
   };
+
+  useEffect(() => {
+    if (token) redirect('/');
+  }, [token]);
 
   return (
     <Form {...form}>
