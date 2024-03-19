@@ -17,4 +17,5 @@ export interface OrderInterface {
   paymentMethod: string;
   productDetail: string;
   total: number;
+  createdAt?: string
 }

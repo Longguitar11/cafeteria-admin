@@ -12,7 +12,6 @@ export const getAllDishes = async (dispatch: any) => {
 
     console.log({ status, data });
     if (status >= 200 && status < 400) {
-      console.log('store dish to dishSlice')
       dispatch(getDishes(data));
     } else {
       toast.error('Chỉ admin mới có thể thực hiện thao tác này!');
@@ -41,7 +40,7 @@ export const addADish = async (data: DishType, dispatch: any) => {
 
     if (status >= 200 && status < 400) {
       getAllDishes(dispatch);
-      toast.success('Tạo sản phẩm thành công!');
+      toast.success('Tạo món mới thành công!');
     } else {
       toast.error('Chỉ admin mới có thể thực hiện thao tác này!');
     }
@@ -118,7 +117,7 @@ export const updateDishStatus = async ({ id, dishStatus  }: updateDishStatusRequ
 
     if (status >= 200 && status < 400) {
       getAllDishes(dispatch);
-      toast.success('Đổi trạng thái thành công!');
+      toast.success('Đổi trạng thái món thành công!');
     } else {
       toast.error('Chỉ admin mới có thể thực hiện thao tác này!');
     }

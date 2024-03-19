@@ -25,6 +25,9 @@ import { deleteABill, getBills } from '@/apis/order';
 import { AlertDialogCustom } from '@/components/AlertDialogCustom';
 import { Badge } from '@/components/ui/badge';
 import { OrderFilter } from '@/components/Filter';
+import { paymentMethods } from '@/constants/paymentMethods';
+import { getDateTime } from '@/utils/datetime';
+import { bills } from '@/constants/bill';
 
 const OrdersManagement = (props: Props) => {
   const { className } = props;
@@ -33,9 +36,13 @@ const OrdersManagement = (props: Props) => {
 
   const allOrders = useAppSelector((state) => state.orderStore.allOrders);
 
-  const [filteredOrders, setFilteredOrders] = useState<OrderInterface[]>([]);
+  console.log({ allOrders });
+
+  const [filteredOrders, setFilteredOrders] = useState<OrderInterface[]>(bills);
   const [isShowViewOrder, setIsShowViewOrder] = useState<boolean>(false);
   const [orderId, setOrderId] = useState<number>(0);
+
+  console.log({filteredOrders})
 
   const sortedAllOrders: OrderInterface[] = useMemo(() => {
     const copiedArr = JSON.parse(JSON.stringify(allOrders));
@@ -48,9 +55,9 @@ const OrdersManagement = (props: Props) => {
   }, [orderId, allOrders]);
 
   // set filtered orders when all orders updated
-  useEffect(() => {
-    setFilteredOrders(allOrders);
-  }, [allOrders]);
+  // useEffect(() => {
+  //   setFilteredOrders(allOrders);
+  // }, [allOrders]);
 
   useEffect(() => {
     getBills(dispatch);
@@ -63,10 +70,10 @@ const OrdersManagement = (props: Props) => {
         LỊCH SỬ GIAO DỊCH
       </p>
 
-      {sortedAllOrders.length > 0 ? (
-        <>
+      {bills.length > 0 ? (
+        <div className='relative'>
           <OrderFilter
-            allOrders={allOrders}
+            allOrders={bills}
             orders={filteredOrders}
             setOrders={setFilteredOrders}
             className='mt-4'
@@ -77,18 +84,19 @@ const OrdersManagement = (props: Props) => {
               <TableRow className='whitespace-nowrap'>
                 <TableHead className=''>Id</TableHead>
                 <TableHead>Email NV</TableHead>
+                <TableHead>Ngày tạo</TableHead>
                 <TableHead>Tên KH</TableHead>
                 {/* <TableHead className='w-20'>Ảnh</TableHead> */}
-                <TableHead className=''>SĐT KH</TableHead>
-                <TableHead className=''>Email KH</TableHead>
-                <TableHead className=''>Chi tiết đơn hàng</TableHead>
-                <TableHead className=''>Hình thức thanh toán</TableHead>
-                <TableHead className=''>Thành tiền</TableHead>
-                <TableHead className=''>Thao tác</TableHead>
+                <TableHead>SĐT KH</TableHead>
+                <TableHead>Email KH</TableHead>
+                <TableHead>Chi tiết đơn hàng</TableHead>
+                <TableHead>Hình thức thanh toán</TableHead>
+                <TableHead>Thành tiền</TableHead>
+                <TableHead>Thao tác</TableHead>
               </TableRow>
             </TableHeader>
 
-            <TableBody className=''>
+            <TableBody>
               {filteredOrders.length > 0 ? (
                 filteredOrders.map((order) => {
                   const {
@@ -96,16 +104,24 @@ const OrdersManagement = (props: Props) => {
                     uuid,
                     contactNumber,
                     createdBy,
+                    createdAt,
                     email,
                     name,
                     paymentMethod,
                     total,
                   } = order;
 
+                  console.log({ order });
+
+                  const currentPaymentMethod = paymentMethods.find(
+                    (pm) => pm.value === paymentMethod
+                  )?.label;
+
                   return (
                     <TableRow key={uuid}>
                       <TableCell className='font-medium'>{id}</TableCell>
                       <TableCell>{createdBy}</TableCell>
+                      <TableCell>{getDateTime(new Date(createdAt!))}</TableCell>
                       <TableCell>{name}</TableCell>
 
                       {/* <TableCell className='w-20'>
@@ -131,16 +147,7 @@ const OrdersManagement = (props: Props) => {
                       </TableCell>
 
                       <TableCell className=''>
-                        <Badge
-                          className='w-full'
-                          variant={
-                            paymentMethod === 'CASH' ? 'destructive' : 'default'
-                          }
-                        >
-                          {paymentMethod === 'CASH'
-                            ? 'Tiền mặt'
-                            : 'Chuyển khoản'}
-                        </Badge>
+                        <Badge className='w-full'>{currentPaymentMethod}</Badge>
                       </TableCell>
 
                       <TableCell className='font-medium'>
@@ -167,9 +174,11 @@ const OrdersManagement = (props: Props) => {
               )}
             </TableBody>
           </Table>
-        </>
+        </div>
       ) : (
-        <p>Lịch sử giao dịch trống!</p>
+        <p className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl font-medium text-red-500'>
+          Lịch sử giao dịch trống!
+        </p>
       )}
 
       <Dialog open={isShowViewOrder} onOpenChange={setIsShowViewOrder}>

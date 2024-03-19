@@ -53,9 +53,9 @@ const DishesManagement = (props: Props) => {
     console.log({ values });
 
     const { categoryId, name, price, description } = values;
-    const dishNames = dishes.map(({ name }: DishType) => escapeText(name));
+    const dishNames = dishes.map(({ name }: DishType) => escapeText(name).toLowerCase());
 
-    if (!dishNames.includes(escapeText(name))) {
+    if (!dishNames.includes(escapeText(name).toLowerCase())) {
       addADish(
         {
           categoryId,

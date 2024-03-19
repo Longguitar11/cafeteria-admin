@@ -44,7 +44,7 @@ const CreateACategory = (props: Props) => {
 
         <Form {...form}>
           <form
-            className={cn('space-y-2', className)}
+            className={cn('space-y-4', className)}
             onSubmit={handleSubmit(onSubmit)}
           >
             <FormField
@@ -52,7 +52,7 @@ const CreateACategory = (props: Props) => {
               name='name'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên loại</FormLabel>
+                  <FormLabel className='text-black'>Tên loại</FormLabel>
                   <FormControl>
                     <Input placeholder='Nhập tên loại...' {...field} />
                   </FormControl>
@@ -61,7 +61,7 @@ const CreateACategory = (props: Props) => {
               )}
             />
 
-            <div className='flex justify-between'>
+            <div className='flex justify-between gap-4'>
               <DialogClose asChild>
                 <Button variant='secondary' className='flex-1'>
                   Hủy bỏ

@@ -1,16 +1,16 @@
 'use client';
 
 import { OrderInterface } from '@/types/order';
-import { addString, calAmount } from '@/utils/dish';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { toast } from 'react-toastify';
 
 interface OrderState {
   allOrders: OrderInterface[];
 }
 
 const initialState: OrderState = {
-  allOrders: JSON.parse(localStorage.getItem('allOrders') || '[]'),
+  allOrders:
+    typeof window !== undefined &&
+    JSON.parse(localStorage.getItem('allOrders') || '[]'),
 };
 
 const OrderSlice = createSlice({
@@ -18,7 +18,13 @@ const OrderSlice = createSlice({
   initialState,
   reducers: {
     getAllOrders: (state, action: PayloadAction<OrderInterface[]>) => {
-      state.allOrders = action.payload;
+      const orders = action.payload.map((order) => ({
+        ...order,
+        createdAt: new Date(),
+      }));
+
+      state.allOrders = orders;
+      localStorage.setItem('allOrders', JSON.stringify(state.allOrders));
     },
   },
 });
