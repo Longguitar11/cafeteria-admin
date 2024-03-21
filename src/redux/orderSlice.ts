@@ -18,12 +18,7 @@ const OrderSlice = createSlice({
   initialState,
   reducers: {
     getAllOrders: (state, action: PayloadAction<OrderInterface[]>) => {
-      const orders = action.payload.map((order) => ({
-        ...order,
-        createdAt: new Date(),
-      }));
-
-      state.allOrders = orders;
+      state.allOrders = action.payload;
       localStorage.setItem('allOrders', JSON.stringify(state.allOrders));
     },
   },

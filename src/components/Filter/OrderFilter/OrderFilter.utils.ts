@@ -1,6 +1,6 @@
 import { OrderInterface } from '@/types/order';
 import { PaymentMethod } from '@/types/paymentMethod';
-import { endOfDate, startOfDate } from '@/utils/datetime';
+import { endOfDate, getDateFromString, startOfDate } from '@/utils/datetime';
 import { escapeText } from '@/utils/text';
 import dayjs from 'dayjs';
 import { filter, isEqual } from 'lodash';
@@ -58,23 +58,24 @@ export const filterOptions = (
     return filteredOrders;
   } else if (text === '' && !paymentMethod && fromTime && !toTime) {
     console.log('from time');
-
     const filteredOrders = allOrders.filter((order) => {
-      return new Date(order.createdAt!).getDate() === fromTime.getDate();
+      console.log(getDateFromString(order.createdAt));
+      getDateFromString(order.createdAt);
+      return getDateFromString(order.createdAt) === fromTime.getDate();
     });
 
-    return filteredOrders.length > 0 ? filteredOrders : allOrders;
+    return filteredOrders.length > 0 ? filteredOrders : [];
   } else if (text === '' && !paymentMethod && fromTime && toTime) {
     console.log('from and to time');
 
     const filteredOrders = allOrders.filter((order) => {
       return (
-        new Date(order.createdAt!).getDate() >= fromTime.getDate() &&
-        new Date(order.createdAt!).getDate() <= toTime.getDate()
+        getDateFromString(order.createdAt) >= fromTime.getDate() &&
+        getDateFromString(order.createdAt) <= toTime.getDate()
       );
     });
 
-    return filteredOrders.length > 0 ? filteredOrders : allOrders;
+    return filteredOrders;
   } else if (text && paymentMethod && !fromTime && !toTime) {
     console.log('text and payment method');
 
@@ -113,7 +114,7 @@ export const filterOptions = (
   } else if (text && !paymentMethod && fromTime && !toTime) {
     console.log('text and from time');
     const filteredOrders = allOrders.filter((order) => {
-      return new Date(order.createdAt!).getDate() >= fromTime.getDate();
+      return getDateFromString(order.createdAt) >= fromTime.getDate();
     });
 
     const textLowercase = escapeText(text).toLowerCase();
@@ -148,8 +149,8 @@ export const filterOptions = (
     console.log('text, from and to time');
     const filteredOrders = allOrders.filter((order) => {
       return (
-        new Date(order.createdAt!).getDate() >= fromTime.getDate() &&
-        new Date(order.createdAt!).getDate() <= toTime.getDate()
+        getDateFromString(order.createdAt) >= fromTime.getDate() &&
+        getDateFromString(order.createdAt) <= toTime.getDate()
       );
     });
 
@@ -186,8 +187,8 @@ export const filterOptions = (
     let filteredOrders = allOrders.filter(
       (order) => order.paymentMethod === paymentMethod
     );
-    filteredOrders = allOrders.filter((order) => {
-      return new Date(order.createdAt!).getDate() >= fromTime.getDate();
+    filteredOrders = filteredOrders.filter((order) => {
+      return getDateFromString(order.createdAt) === fromTime.getDate();
     });
 
     return filteredOrders;
@@ -196,10 +197,11 @@ export const filterOptions = (
     let filteredOrders = allOrders.filter(
       (order) => order.paymentMethod === paymentMethod
     );
-    filteredOrders = allOrders.filter((order) => {
+
+    filteredOrders = filteredOrders.filter((order) => {
       return (
-        new Date(order.createdAt!).getDate() >= fromTime.getDate() &&
-        new Date(order.createdAt!).getDate() <= toTime.getDate()
+        getDateFromString(order.createdAt) >= fromTime.getDate() &&
+        getDateFromString(order.createdAt) <= toTime.getDate()
       );
     });
 
@@ -210,8 +212,8 @@ export const filterOptions = (
       (order) => order.paymentMethod === paymentMethod
     );
 
-    filteredOrders = allOrders.filter((order) => {
-      return new Date(order.createdAt!).getDate() >= fromTime.getDate();
+    filteredOrders = filteredOrders.filter((order) => {
+      return getDateFromString(order.createdAt) >= fromTime.getDate();
     });
 
     const textLowercase = escapeText(text).toLowerCase();
@@ -247,10 +249,10 @@ export const filterOptions = (
       (order) => order.paymentMethod === paymentMethod
     );
 
-    filteredOrders = allOrders.filter((order) => {
+    filteredOrders = filteredOrders.filter((order) => {
       return (
-        new Date(order.createdAt!).getDate() >= fromTime!.getDate() &&
-        new Date(order.createdAt!).getDate() <= toTime!.getDate()
+        getDateFromString(order.createdAt) >= fromTime!.getDate() &&
+        getDateFromString(order.createdAt) <= toTime!.getDate()
       );
     });
 

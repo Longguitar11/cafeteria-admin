@@ -38,7 +38,7 @@ const OrdersManagement = (props: Props) => {
 
   console.log({ allOrders });
 
-  const [filteredOrders, setFilteredOrders] = useState<OrderInterface[]>(bills);
+  const [filteredOrders, setFilteredOrders] = useState<OrderInterface[]>(allOrders);
   const [isShowViewOrder, setIsShowViewOrder] = useState<boolean>(false);
   const [orderId, setOrderId] = useState<number>(0);
 
@@ -55,9 +55,9 @@ const OrdersManagement = (props: Props) => {
   }, [orderId, allOrders]);
 
   // set filtered orders when all orders updated
-  // useEffect(() => {
-  //   setFilteredOrders(allOrders);
-  // }, [allOrders]);
+  useEffect(() => {
+    setFilteredOrders(allOrders);
+  }, [allOrders]);
 
   useEffect(() => {
     getBills(dispatch);
@@ -70,10 +70,10 @@ const OrdersManagement = (props: Props) => {
         LỊCH SỬ GIAO DỊCH
       </p>
 
-      {bills.length > 0 ? (
+      {allOrders.length > 0 ? (
         <div className='relative'>
           <OrderFilter
-            allOrders={bills}
+            allOrders={sortedAllOrders}
             orders={filteredOrders}
             setOrders={setFilteredOrders}
             className='mt-4'
@@ -111,8 +111,6 @@ const OrdersManagement = (props: Props) => {
                     total,
                   } = order;
 
-                  console.log({ order });
-
                   const currentPaymentMethod = paymentMethods.find(
                     (pm) => pm.value === paymentMethod
                   )?.label;
@@ -121,7 +119,7 @@ const OrdersManagement = (props: Props) => {
                     <TableRow key={uuid}>
                       <TableCell className='font-medium'>{id}</TableCell>
                       <TableCell>{createdBy}</TableCell>
-                      <TableCell>{getDateTime(new Date(createdAt!))}</TableCell>
+                      <TableCell>{createdAt}</TableCell>
                       <TableCell>{name}</TableCell>
 
                       {/* <TableCell className='w-20'>

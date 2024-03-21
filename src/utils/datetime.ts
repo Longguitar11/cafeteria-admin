@@ -25,3 +25,7 @@ export const endOfDate = (
   const date = dayjs(inputDate).endOf('date');
   return isUtc ? dayjs.utc(date).format(formatMask) : date.format(formatMask);
 };
+
+export const getDateFromString = (date: string) => {
+  return +date.split('/')[0];
+};

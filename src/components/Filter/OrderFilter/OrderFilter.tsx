@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { CalendarIcon } from '@radix-ui/react-icons';
-import { addDays, format } from 'date-fns';
+import { format } from 'date-fns';
 import { DateRange } from 'react-day-picker';
 
 import { Calendar } from '@/components/ui/calendar';
@@ -34,14 +34,12 @@ const OrderFilter = (props: Props) => {
     to: undefined,
   });
 
-  console.log(date);
-
   const timerUpdateSearchText = useRef<NodeJS.Timeout | null>(null);
 
   const reset = () => {
     setSearchValue('');
     setPaymentMethod('ALL');
-    setDate({from: undefined, to: undefined});
+    setDate({ from: undefined, to: undefined });
   };
 
   useEffect(() => {
@@ -56,11 +54,9 @@ const OrderFilter = (props: Props) => {
         toTime: date?.to || undefined,
       });
 
-      console.log({result})
+      console.log({ result });
 
-      if (result.toString() !== orders.toString()) {
-        setOrders(result);
-      }
+      setOrders(result);
     }, 800);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -75,22 +71,6 @@ const OrderFilter = (props: Props) => {
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}
       />
-
-      {/* <Select
-        value={filterByDay}
-        onValueChange={(value: DayType) => onDateSelect(value)}
-      >
-        <SelectTrigger className='w-[300px]'>
-          <SelectValue placeholder='Thời gian' />
-        </SelectTrigger>
-        <SelectContent>
-          {filterByDayData.map((item) => (
-            <SelectItem key={item.value} value={item.value}>
-              {item.text}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select> */}
 
       <Popover>
         <PopoverTrigger asChild>
