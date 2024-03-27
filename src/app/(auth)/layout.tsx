@@ -1,12 +1,12 @@
 import { ToastContainer } from 'react-toastify';
-import { Roboto_Mono } from 'next/font/google';
+import { Dosis, Raleway } from 'next/font/google';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import { AuthProvider } from '@/containers/Auth';
 import 'react-toastify/dist/ReactToastify.css';
 import '../globals.css';
 
-const robotoMono = Roboto_Mono({ subsets: ['vietnamese'] });
+const dosis = Dosis({ subsets: ['vietnamese'] });
 
 export const metadata: Metadata = {
   title: 'Admin',
@@ -21,7 +21,7 @@ export default function AuthLayout({
   return (
     <AuthProvider>
       <html lang='vietnamese'>
-        <body className={robotoMono.className} suppressHydrationWarning={true}>
+        <body className={dosis.className} suppressHydrationWarning={true}>
           <div className='relative w-screen h-screen'>
             <Image src='/images/admin-auth-img.jpg' alt='Signin Image' fill />
           </div>

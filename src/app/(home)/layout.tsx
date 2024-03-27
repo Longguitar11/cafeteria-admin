@@ -1,15 +1,14 @@
 import type { Metadata } from 'next';
-import { Roboto_Mono } from 'next/font/google';
+import { Dosis, Raleway } from 'next/font/google';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Sidebar } from '@/components/Sidebar';
 import StoreProvider from '../StoreProvider';
 import { AuthProvider } from '@/containers/Auth';
-import '../globals.css';
-import { cn } from '@/lib/utils';
 import { Header } from '@/components/Header';
+import '../globals.css';
 
-const robotoMono = Roboto_Mono({ subsets: ['vietnamese'] });
+const dosis = Dosis({ subsets: ['vietnamese'] });
 
 export const metadata: Metadata = {
   title: 'Admin',
@@ -27,7 +26,7 @@ export default function RootLayout({
         <html lang='vietnamese'>
           <body
             suppressHydrationWarning={true}
-            className={robotoMono.className}
+            className={dosis.className}
           >
             <Header />
 

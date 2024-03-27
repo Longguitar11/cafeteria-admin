@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Props } from './DishesManagement.models';
 import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import {
@@ -12,10 +12,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { getValueString } from '@/utils/currency';
-import { CreateADish } from './CreateADish';
 import { AlertDialogCustom } from '@/components/AlertDialogCustom';
-import { EditADish } from './EditADish';
-import { DishForm } from '@/schemas/product';
+import { DishFormType } from '@/schemas/product';
 // import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import {
@@ -36,6 +34,8 @@ import { DishType } from '@/types/dish';
 import { escapeText } from '@/utils/text';
 import { toast } from 'react-toastify';
 import { DishFilter } from '@/components/Filter/DishFilter';
+import { DishForm } from '@/components/DishForm';
+import { saveToPublicFolder } from '@/utils/thumbnail';
 
 const DishesManagement = (props: Props) => {
   const { className } = props;
@@ -49,28 +49,38 @@ const DishesManagement = (props: Props) => {
   const [isCreateDishOpen, setIsCreateDishOpen] = useState<boolean>(false);
   const [isEditDishOpen, setIsEditDishOpen] = useState<boolean>(false);
 
-  const onCreateADishSubmit = (values: DishForm) => {
+  const selectedDish = useMemo(() => {
+    const dish = dishes.find((dish) => dish.id === dishId);
+    if (dish) return dish;
+  }, [dishId, dishes]);
+
+  const onCreateADishSubmit = (values: DishFormType) => {
     console.log({ values });
 
-    const { categoryId, name, price, description } = values;
-    const dishNames = dishes.map(({ name }: DishType) => escapeText(name).toLowerCase());
+    const { categoryId, name, price, description, thumbnail } = values;
+    const dishNames = dishes.map(({ name }: DishType) =>
+      escapeText(name).toLowerCase()
+    );
 
     if (!dishNames.includes(escapeText(name).toLowerCase())) {
-      addADish(
-        {
-          categoryId,
-          name,
-          price,
-          description,
-        },
-        dispatch
-      );
+      // addADish(
+      //   {
+      //     categoryId,
+      //     name,
+      //     price,
+      //     description,
+      //   },
+      //   dispatch
+      // );
+
+      // save to public folder
+      saveToPublicFolder(thumbnail);
 
       setIsCreateDishOpen(false);
     } else toast.error('Tên món đã tồn tại! Hãy chọn tên khác!');
   };
 
-  const onEditADishSubmit = (values: DishForm) => {
+  const onEditADishSubmit = (values: DishFormType) => {
     console.log({ values });
 
     if (values) {
@@ -213,20 +223,21 @@ const DishesManagement = (props: Props) => {
       )}
 
       {isCreateDishOpen && (
-        <CreateADish
+        <DishForm
+          onSubmit={onCreateADishSubmit}
           open={isCreateDishOpen}
           setOpen={setIsCreateDishOpen}
-          onSubmit={onCreateADishSubmit}
+          title='TẠO MÓN'
         />
       )}
 
       {isEditDishOpen && (
-        <EditADish
+        <DishForm
+          onSubmit={onEditADishSubmit}
           open={isEditDishOpen}
           setOpen={setIsEditDishOpen}
-          dishes={dishes}
-          dishId={dishId}
-          onSubmit={onEditADishSubmit}
+          selectedDish={selectedDish}
+          title='SỬA MÓN'
         />
       )}
     </section>

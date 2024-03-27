@@ -11,15 +11,15 @@ const ACCEPTED_IMAGE_MIME_TYPES = [
 
 export const DishSchema = z.object({
   name: z.string().min(1, 'Vui lòng nhập tên món!'),
-  // thumbnail: z
-  //   .any()
-  //   .refine((files) => {
-  //     return files?.size <= MAX_FILE_SIZE;
-  //   }, `Kích cỡ ảnh tối đa là 5MB!`)
-  //   .refine(
-  //     (files) => ACCEPTED_IMAGE_MIME_TYPES.includes(files?.type),
-  //     'Chỉ hỗ trợ những định dạng sau đây (.jpg, .jpeg, .png .webp).'
-  //   ),
+  thumbnail: z
+    .any()
+    .refine((files) => {
+      return files?.size <= MAX_FILE_SIZE;
+    }, `Kích cỡ ảnh tối đa là 5MB!`)
+    .refine(
+      (files) => ACCEPTED_IMAGE_MIME_TYPES.includes(files?.type),
+      'Chỉ hỗ trợ những định dạng sau đây (.jpg, .jpeg, .png .webp).'
+    ),
   categoryId: z.number({
     required_error: 'Vui lòng chọn loại!',
     invalid_type_error: 'Id loại phải là một chữ số!',
@@ -31,4 +31,4 @@ export const DishSchema = z.object({
   description: z.string().min(1, 'Vui lòng nhập mô tả!'),
 });
 
-export type DishForm = z.infer<typeof DishSchema>;
+export type DishFormType = z.infer<typeof DishSchema>;

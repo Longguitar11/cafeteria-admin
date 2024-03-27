@@ -22,7 +22,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Props } from './EditADish.models';
 import { useEffect, useMemo, useState } from 'react';
-import { DishForm, DishSchema } from '@/schemas/product';
+import { DishFormType, DishSchema } from '@/schemas/product';
 import { CategorySelect } from '@/components/CategorySelect';
 import { PriceInput } from '@/components/InputCustom';
 
@@ -36,7 +36,7 @@ const EditADish = (props: Props) => {
     if (dish) return dish;
   }, [dishId, dishes]);
 
-  const form = useForm<DishForm>({
+  const form = useForm<DishFormType>({
     resolver: zodResolver(DishSchema),
     mode: 'onSubmit',
     defaultValues: {
