@@ -35,9 +35,9 @@ const DishForm = (props: Props) => {
     onSubmit,
   } = props;
 
-  const [image, setImage] = useState<File | null>(null);
+  // const [image, setImage] = useState<File | null>(null);
 
-  console.log({ image });
+  // console.log({ image });
 
   const form = useForm<DishFormType>({
     resolver: zodResolver(DishSchema),
@@ -46,7 +46,6 @@ const DishForm = (props: Props) => {
       price: 10000,
       categoryId: undefined,
       description: '',
-      thumbnail: undefined,
     },
   });
 
@@ -64,35 +63,6 @@ const DishForm = (props: Props) => {
       reset();
       // setImage(null);
     }
-  };
-
-  const onThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
-    const file = e.target.files[0];
-    const reader = new FileReader();
-
-    reader.onloadend = () => {
-      // You can perform any additional actions with the file here
-      // For example, you can display a preview of the image
-      console.log('File uploaded:', reader.result);
-
-      // Now, you can move the file to the public folder
-      moveFileToPublic(reader.result as string);
-    };
-
-    reader.readAsDataURL(file);
-    setImage(e.target.files[0]);
-  };
-
-  const moveFileToPublic = (dataUrl: string) => {
-    console.log({imageName: image?.name })
-    // Create a virtual link element to download the file
-    const a = document.createElement('a');
-    a.href = dataUrl;
-    a.download = image?.name || 'image.jpg'; // Set the file name here
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
   };
 
   useEffect(() => {
@@ -147,7 +117,7 @@ const DishForm = (props: Props) => {
               )}
             />
 
-            <FormField
+            {/* <FormField
               control={control}
               name='thumbnail'
               render={({ field: { name, ref, onBlur, onChange } }) => (
@@ -181,7 +151,7 @@ const DishForm = (props: Props) => {
                   height={60}
                 />
               </div>
-            )}
+            )} */}
 
             <CategorySelect form={form} />
 

@@ -34,7 +34,7 @@ const CategorySelect = (props: Props) => {
     setValue,
     getValues,
     resetField,
-    formState: { errors, isSubmitSuccessful, isDirty, dirtyFields },
+    formState: { errors, isSubmitSuccessful },
   } = form;
 
   const dispatch = useAppDispatch();

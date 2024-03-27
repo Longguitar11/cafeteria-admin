@@ -57,24 +57,21 @@ const DishesManagement = (props: Props) => {
   const onCreateADishSubmit = (values: DishFormType) => {
     console.log({ values });
 
-    const { categoryId, name, price, description, thumbnail } = values;
+    const { categoryId, name, price, description } = values;
     const dishNames = dishes.map(({ name }: DishType) =>
       escapeText(name).toLowerCase()
     );
 
     if (!dishNames.includes(escapeText(name).toLowerCase())) {
-      // addADish(
-      //   {
-      //     categoryId,
-      //     name,
-      //     price,
-      //     description,
-      //   },
-      //   dispatch
-      // );
-
-      // save to public folder
-      saveToPublicFolder(thumbnail);
+      addADish(
+        {
+          categoryId,
+          name,
+          price,
+          description,
+        },
+        dispatch
+      );
 
       setIsCreateDishOpen(false);
     } else toast.error('Tên món đã tồn tại! Hãy chọn tên khác!');
