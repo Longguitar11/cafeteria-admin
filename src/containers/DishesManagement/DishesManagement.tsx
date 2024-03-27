@@ -14,7 +14,6 @@ import {
 import { getValueString } from '@/utils/currency';
 import { AlertDialogCustom } from '@/components/AlertDialogCustom';
 import { DishFormType } from '@/schemas/product';
-// import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import {
   addADish,
@@ -35,7 +34,6 @@ import { escapeText } from '@/utils/text';
 import { toast } from 'react-toastify';
 import { DishFilter } from '@/components/Filter/DishFilter';
 import { DishForm } from '@/components/DishForm';
-import { saveToPublicFolder } from '@/utils/thumbnail';
 
 const DishesManagement = (props: Props) => {
   const { className } = props;
