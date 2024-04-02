@@ -11,9 +11,7 @@ export const AuthContext = createContext<AuthContextInterface>({
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [token, setToken] = useState<string>(
-    getItemLS('userToken')!
-  );
+  const [token, setToken] = useState<string>(getItemLS('userToken')!);
 
   const setNewToken = (newToken: string) => {
     if (newToken !== token) {
@@ -28,7 +26,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ token, setToken: setNewToken, removeToken }}>
+    <AuthContext.Provider
+      value={{ token: token!, setToken: setNewToken, removeToken }}
+    >
       {children}
     </AuthContext.Provider>
   );

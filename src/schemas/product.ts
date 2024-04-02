@@ -1,25 +1,26 @@
 import { z } from 'zod';
 
-// const MAX_FILE_SIZE = 1024 * 1024 * 5;
+const MAX_FILE_SIZE = 1024 * 1024 * 5;
 
-// const ACCEPTED_IMAGE_MIME_TYPES = [
-//   'image/jpeg',
-//   'image/jpg',
-//   'image/png',
-//   'image/webp',
-// ];
+const ACCEPTED_IMAGE_MIME_TYPES = [
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp',
+  'image/jfif',
+];
 
 export const DishSchema = z.object({
   name: z.string().min(1, 'Vui lòng nhập tên món!'),
-  // thumbnail: z
-  //   .any()
-  //   .refine((files) => {
-  //     return files?.size <= MAX_FILE_SIZE;
-  //   }, `Kích cỡ ảnh tối đa là 5MB!`)
-  //   .refine(
-  //     (files) => ACCEPTED_IMAGE_MIME_TYPES.includes(files?.type),
-  //     'Chỉ hỗ trợ những định dạng sau đây (.jpg, .jpeg, .png .webp).'
-  //   ),
+  thumbnail: z
+    .any()
+    .refine((files) => {
+      return files?.size <= MAX_FILE_SIZE;
+    }, `Kích cỡ ảnh tối đa là 5MB!`)
+    .refine(
+      (files) => ACCEPTED_IMAGE_MIME_TYPES.includes(files?.type),
+      'Chỉ hỗ trợ những định dạng sau đây (.jpg, .jpeg, .png .webp, jfif).'
+    ),
   categoryId: z.number({
     required_error: 'Vui lòng chọn loại!',
     invalid_type_error: 'Id loại phải là một chữ số!',

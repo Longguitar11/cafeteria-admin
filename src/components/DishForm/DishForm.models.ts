@@ -7,6 +7,7 @@ export interface Props {
   open: boolean;
   title: string;
   selectedDish?: DishType;
+  submitTitle?: string
   //
   setOpen: Dispatch<SetStateAction<boolean>>;
   onSubmit: (values: DishFormType) => void;

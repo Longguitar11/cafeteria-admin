@@ -3,7 +3,6 @@
 import { toast } from 'react-toastify';
 import Axios from './axiosConfig';
 import axios from 'axios';
-import { getAllUsers as getUsers } from '@/redux/userSlice';
 
 interface SignupRequest {
   email: string;
@@ -147,7 +146,6 @@ export type activateUserAccountRequest = {
 
 export const activateUserAccount = async (
   data: activateUserAccountRequest,
-  dispatch: any
 ) => {
   const { id, userStatus } = data;
 
@@ -163,7 +161,7 @@ export const activateUserAccount = async (
       if (userStatus === 'true') toast.success(`Tài khoản đã được duyệt!`);
       else toast.success(`Tài khoản đã bỏ duyệt!`);
 
-      getAllUsers(dispatch);
+      getAllUsers();
       return true;
     }
   } catch (error) {
@@ -177,14 +175,14 @@ export const activateUserAccount = async (
 
 // GET ALL USERS
 
-export const getAllUsers = async (dispatch: any) => {
+export const getAllUsers = async () => {
   try {
     const { status, data } = await Axios.get('/user/get');
 
     console.log({ status, data });
 
     if (status >= 200 && status < 400) {
-      dispatch(getUsers(data));
+      return data;
     } else toast.error('Không thể lấy dữ liệu người dùng!');
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -197,14 +195,14 @@ export const getAllUsers = async (dispatch: any) => {
 
 // DELETE USER
 
-export const deleteAUser = async (id: number, dispatch: any) => {
+export const deleteAUser = async (id: number) => {
   try {
     const { status, data } = await Axios.post(`/user/delete/${id}`);
 
     console.log({ status, data });
 
     if (status >= 200 && status < 400) {
-      getAllUsers(dispatch);
+      getAllUsers();
       toast.success('Xóa người dùng thành công!');
     }
   } catch (error) {

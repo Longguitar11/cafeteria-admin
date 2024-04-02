@@ -1,3 +1,4 @@
+import { CategoryType } from "@/types/category"
 import { DishType } from "@/types/dish"
 import { DropdownData } from "@/types/dropdown"
 

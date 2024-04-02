@@ -3,16 +3,17 @@
 import { toast } from 'react-toastify';
 import Axios from './axiosConfig';
 import axios from 'axios';
-import { getCategories } from '@/redux/categorySlice';
+import { storeCategories } from '@/containers/CategoriesManagement/CategoriesManagement.utils';
 
-export const getAllCategories = async (dispatch: any) => {
+export const getAllCategories = async () => {
   try {
     const { status, data } = await Axios.get('/category/get');
 
     console.log({ status, data });
-    
+
     if (status >= 200 && status < 400) {
-      dispatch(getCategories(data));
+      storeCategories(data);
+      return data;
     } else {
       toast.error('Chỉ admin mới có thể thực hiện thao tác này!');
     }
@@ -30,7 +31,7 @@ interface CategoryRequest {
   name: string;
 }
 
-export const addACategory = async (data: CategoryRequest, dispatch: any) => {
+export const addACategory = async (data: CategoryRequest) => {
   const { name } = data;
 
   try {
@@ -41,7 +42,6 @@ export const addACategory = async (data: CategoryRequest, dispatch: any) => {
     console.log({ status, data });
 
     if (status >= 200 && status < 400) {
-      getAllCategories(dispatch);
       toast.success('Tạo loại thành công!');
     } else {
       toast.error('Chỉ admin mới có thể thực hiện thao tác này!');
@@ -55,7 +55,7 @@ export const addACategory = async (data: CategoryRequest, dispatch: any) => {
   }
 };
 
-export const editACategory = async (data: CategoryRequest, dispatch: any) => {
+export const editACategory = async (data: CategoryRequest) => {
   const { id, name } = data;
 
   try {
@@ -67,7 +67,6 @@ export const editACategory = async (data: CategoryRequest, dispatch: any) => {
     console.log({ status, data });
 
     if (status >= 200 && status < 400) {
-      getAllCategories(dispatch);
       toast.success('Sửa loại thành công!');
     } else {
       toast.error('Chỉ admin mới có thể thực hiện thao tác này!');
@@ -81,15 +80,13 @@ export const editACategory = async (data: CategoryRequest, dispatch: any) => {
   }
 };
 
-export const deleteACategory = async (id: number, dispatch: any) => {
-
+export const deleteACategory = async (id: number) => {
   try {
     const { status, data } = await Axios.post(`/category/delete/${id}`);
 
     console.log({ status, data });
 
     if (status >= 200 && status < 400) {
-      getAllCategories(dispatch);
       toast.success('Xóa loại thành công!');
     }
   } catch (error) {

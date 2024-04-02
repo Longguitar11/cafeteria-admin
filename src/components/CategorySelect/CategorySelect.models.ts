@@ -1,3 +1,4 @@
+import { CategoryType } from '@/types/category';
 import { UseFormReturn } from 'react-hook-form';
 
 export interface Props {

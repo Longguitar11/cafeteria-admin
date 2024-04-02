@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import {
   Command,
@@ -11,18 +12,19 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Button } from '../../ui/button';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { useEffect, useMemo, useState } from 'react';
 import { CategoryFilterType } from './DishFilter.models';
-import { useAppSelector } from '@/redux/hook';
+import { CategoryType } from '@/types/category';
+import { getItemLS } from '@/utils/localStorage';
 
 export const CategoryFilter = (props: CategoryFilterType) => {
   const { className = '', cateId, setCateId } = props;
   const [open, setOpen] = useState<boolean>(false);
   const [value, setValue] = useState<string>('');
+  const [categories, setCategories] = useState<CategoryType[]>([]);
 
-  const categories = useAppSelector((state) => state.categoryStore.categories);
+  console.log()
 
   useEffect(() => {
     const cate = categories.find((cate) => cate.value === value);
@@ -30,6 +32,10 @@ export const CategoryFilter = (props: CategoryFilterType) => {
     if (value === '') setCateId(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
+
+  useEffect(() => {
+    setCategories(JSON.parse(getItemLS('categories')!) as CategoryType[]);
+  }, []);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

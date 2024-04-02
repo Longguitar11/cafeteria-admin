@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   FormControl,
   FormField,
@@ -18,14 +18,14 @@ import {
   CommandInput,
   CommandItem,
 } from '../ui/command';
-import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import { cn } from '@/lib/utils';
 import { Props } from './CategorySelect.models';
 import { Input } from '../ui/input';
-import { addACategory } from '@/apis/category';
+import { addACategory, getAllCategories } from '@/apis/category';
 import { CategoryType } from '@/types/category';
 import { escapeText } from '@/utils/text';
 import { toast } from 'react-toastify';
+import { getItemLS } from '@/utils/localStorage';
 
 const CategorySelect = (props: Props) => {
   const { className = '', form } = props;
@@ -37,21 +37,24 @@ const CategorySelect = (props: Props) => {
     formState: { errors, isSubmitSuccessful },
   } = form;
 
-  const dispatch = useAppDispatch();
-
   const ref = useRef<HTMLInputElement>(null);
 
   const [isCreateCategory, setIsCreateCategory] = useState<boolean>(false);
   const [newCategory, setNewCategory] = useState<string>('');
+  const [categories, setCategories] = useState<CategoryType[]>([]);
 
-  const categories = useAppSelector((state) => state.categoryStore.categories);
+  // useCallback
+  const updateCategories = useCallback(() => {
+    console.log();
+    setCategories(JSON.parse(getItemLS('categories')!) as CategoryType[]);
+  }, []);
 
   const onCategoryChange = (value: number) => {
     if (getValues('categoryId') === value) resetField('categoryId');
     else setValue('categoryId', value, { shouldDirty: true });
   };
 
-  const onAddCategorySubmit = (e: any) => {
+  const onAddCategorySubmit = async (e: any) => {
     e.preventDefault();
 
     const cateNames = categories.map(({ name }: CategoryType) =>
@@ -60,12 +63,13 @@ const CategorySelect = (props: Props) => {
 
     if (newCategory) {
       if (!cateNames.includes(escapeText(newCategory))) {
-        addACategory(
-          {
-            name: newCategory,
-          },
-          dispatch
-        );
+        await addACategory({
+          name: newCategory,
+        });
+
+        // update categories
+        await getAllCategories();
+        updateCategories();
 
         setNewCategory('');
         setIsCreateCategory(false);
@@ -84,6 +88,11 @@ const CategorySelect = (props: Props) => {
   useEffect(() => {
     if (isSubmitSuccessful && isCreateCategory) setIsCreateCategory(false);
   }, [isSubmitSuccessful, isCreateCategory]);
+
+  useEffect(() => {
+    updateCategories();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>

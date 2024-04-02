@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Button } from '../ui/button';
@@ -8,6 +8,8 @@ import { accountDropdown } from '@/constants/accountDropdown';
 import { Options } from '../Sidebar/Sidebar.views';
 import { Dropdown } from '../Dropdown';
 import { DropdownHoverType } from './Header.models';
+import { getAllCategories } from '@/apis/category';
+import { storeCategories } from '@/containers/CategoriesManagement/CategoriesManagement.utils';
 
 const Header = () => {
   const router = useRouter();
@@ -22,6 +24,12 @@ const Header = () => {
 
     router.push(url);
   };
+
+  // store categories on localStorage and add value attribute
+  useEffect(() => {
+    getAllCategories();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <section className='h-20 w-full sm:w-[calc(100%-288px)] text-white bg-cyan-800 bg-opacity-80 sm:fixed top-0 right-0 flex justify-between sm:justify-end items-center gap-6 p-10 z-10'>

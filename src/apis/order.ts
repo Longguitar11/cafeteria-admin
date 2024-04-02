@@ -1,16 +1,15 @@
 import axios from 'axios';
 import Axios from './axiosConfig';
 import { toast } from 'react-toastify';
-import { getAllOrders } from '@/redux/orderSlice';
 
-export const getBills = async (dispatch: any) => {
+export const getBills = async () => {
   try {
     const { status, data } = await Axios.get(`/bill/getBills`);
 
     console.log({ status, data });
 
     if (status >= 200 && status < 400) {
-      dispatch(getAllOrders(data));
+      return data;
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -21,14 +20,14 @@ export const getBills = async (dispatch: any) => {
   }
 };
 
-export const deleteABill = async (id: number, dispatch: any) => {
+export const deleteABill = async (id: number) => {
   try {
     const { status, data } = await Axios.post(`/bill/delete/${id}`);
 
     console.log({ status, data });
 
     if (status >= 200 && status < 400) {
-      getBills(dispatch);
+      getBills();
       toast.success('Xóa đơn hàng thành công!');
     }
   } catch (error) {

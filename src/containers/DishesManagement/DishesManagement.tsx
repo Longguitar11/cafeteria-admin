@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Props } from './DishesManagement.models';
-import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import {
   Table,
   TableBody,
@@ -16,7 +15,7 @@ import { AlertDialogCustom } from '@/components/AlertDialogCustom';
 import { DishFormType } from '@/schemas/product';
 import { Button } from '@/components/ui/button';
 import {
-  addADish,
+  addADishV2,
   deleteADish,
   editADish,
   getAllDishes,
@@ -34,54 +33,78 @@ import { escapeText } from '@/utils/text';
 import { toast } from 'react-toastify';
 import { DishFilter } from '@/components/Filter/DishFilter';
 import { DishForm } from '@/components/DishForm';
+import { ImageCustom } from '@/components/ImageCustom';
 
 const DishesManagement = (props: Props) => {
   const { className } = props;
 
-  const dispatch = useAppDispatch();
-
-  const allDishes = useAppSelector((state) => state.dishStore.dishes);
-
+  const [allDishes, setAllDishes] = useState<DishType[]>([]);
+  const [isGettingDishes, setIsGettingDishes] = useState<boolean>(false);
   const [dishId, setDishId] = useState<number>(0);
   const [dishes, setDishes] = useState<DishType[]>(allDishes);
   const [isCreateDishOpen, setIsCreateDishOpen] = useState<boolean>(false);
   const [isEditDishOpen, setIsEditDishOpen] = useState<boolean>(false);
 
+  console.log(isGettingDishes);
+
+  // useMemo
   const selectedDish = useMemo(() => {
     const dish = dishes.find((dish) => dish.id === dishId);
     if (dish) return dish;
   }, [dishId, dishes]);
 
-  const onCreateADishSubmit = (values: DishFormType) => {
+  // useCallback
+  const fetchDishes = useCallback(() => {
+    const res = getAllDishes();
+
+    setIsGettingDishes(true);
+    res
+      .then((res) => {
+        setIsGettingDishes(false);
+        setAllDishes(res);
+      })
+      .catch((error) => console.log(error));
+  }, []);
+
+  const onCreateADishSubmit = async (values: DishFormType) => {
     console.log({ values });
 
-    const { categoryId, name, price, description } = values;
+    const { categoryId, name, price, description, thumbnail } = values;
     const dishNames = dishes.map(({ name }: DishType) =>
       escapeText(name).toLowerCase()
     );
 
     if (!dishNames.includes(escapeText(name).toLowerCase())) {
-      addADish(
-        {
-          categoryId,
-          name,
-          price,
-          description,
-        },
-        dispatch
-      );
+      await addADishV2({
+        name,
+        categoryId,
+        price,
+        description,
+        imageProduct: thumbnail,
+      });
+
+      fetchDishes();
 
       setIsCreateDishOpen(false);
     } else toast.error('Tên món đã tồn tại! Hãy chọn tên khác!');
   };
 
-  const onEditADishSubmit = (values: DishFormType) => {
+  const onEditADishSubmit = async (values: DishFormType) => {
     console.log({ values });
 
     if (values) {
-      const { categoryId, name, description, price } = values;
+      const { categoryId, name, description, price, thumbnail } = values;
 
-      editADish({ id: dishId, categoryId, name, description, price }, dispatch);
+      await editADish({
+        id: dishId,
+        name,
+        categoryId,
+        description,
+        price,
+        imageProduct: thumbnail,
+      });
+
+      fetchDishes();
 
       setIsEditDishOpen(false);
     }
@@ -93,7 +116,7 @@ const DishesManagement = (props: Props) => {
   }, [allDishes]);
 
   useEffect(() => {
-    getAllDishes(dispatch);
+    fetchDishes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -111,109 +134,119 @@ const DishesManagement = (props: Props) => {
         Tạo món
       </Button>
 
-      {allDishes.length > 0 ? (
-        <>
-          <DishFilter
-            allDishes={allDishes}
-            dishes={dishes}
-            setDishes={setDishes}
-            className='mt-20'
-          />
-          <div className='mt-4'>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>STT</TableHead>
-                  <TableHead>Tên</TableHead>
-                  <TableHead>Loại</TableHead>
-                  {/* <TableHead>Ảnh</TableHead> */}
-                  <TableHead>Giá</TableHead>
-                  <TableHead>Mô tả</TableHead>
-                  <TableHead>Trạng thái</TableHead>
-                  <TableHead className='text-center'>Thao tác</TableHead>
-                </TableRow>
-              </TableHeader>
+      {!isGettingDishes ? (
+        allDishes.length > 0 && !isGettingDishes ? (
+          <>
+            <DishFilter
+              allDishes={allDishes}
+              dishes={dishes}
+              setDishes={setDishes}
+              className='mt-20'
+            />
 
-              <TableBody>
-                {dishes.length > 0 ? (
-                  dishes.map((dish, index) => (
-                    <TableRow key={dish.id}>
-                      <TableCell className='font-medium'>{index + 1}</TableCell>
+            <div className='mt-4'>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>STT</TableHead>
+                    <TableHead>Tên</TableHead>
+                    <TableHead>Loại</TableHead>
+                    <TableHead>Ảnh</TableHead>
+                    <TableHead>Giá</TableHead>
+                    <TableHead>Mô tả</TableHead>
+                    <TableHead>Trạng thái</TableHead>
+                    <TableHead className='text-center'>Thao tác</TableHead>
+                  </TableRow>
+                </TableHeader>
 
-                      <TableCell>{dish.name}</TableCell>
+                <TableBody>
+                  {dishes.length > 0 ? (
+                    dishes.map((dish, index) => (
+                      <TableRow key={dish.id}>
+                        <TableCell className='font-medium'>
+                          {index + 1}
+                        </TableCell>
 
-                      {/* <TableCell> */}
-                      {/* <ImageCustom thumbnail={dish.thumbnail} /> */}
-                      {/* <div className={cn('relative w-14 h-14', className)}>
-                      <Image src={dish.thumbnail} alt='thumbnail' fill />
-                    </div>
-                  </TableCell> */}
+                        <TableCell>{dish.name}</TableCell>
 
-                      <TableCell>{dish.categoryName}</TableCell>
-                      <TableCell>
-                        {getValueString(dish.price.toString())}
-                      </TableCell>
-                      <TableCell>{dish.description}</TableCell>
-                      <TableCell>
-                        <Select
-                          value={dish.status}
-                          onValueChange={(value) =>
-                            updateDishStatus(
-                              { id: dish.id!, dishStatus: value },
-                              dispatch
-                            )
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value='true'>Hoạt động</SelectItem>
-                            <SelectItem value='false'>
-                              Ngưng hoạt động
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </TableCell>
-                      <TableCell>
-                        <div className='flex justify-center gap-3'>
-                          <AlertDialogCustom
-                            buttonTitle='Xóa'
-                            onSubmit={() => deleteADish(dish.id!, dispatch)}
-                          />
+                        <TableCell>
+                          <ImageCustom thumbnail={dish.imageProduct} />
+                        </TableCell>
 
-                          <Button
-                            variant='success'
-                            onClick={() => {
-                              setIsEditDishOpen(true);
-                              setDishId((pre) =>
-                                dish?.id && pre !== dish.id ? dish.id : pre
-                              );
+                        <TableCell>{dish.categoryName}</TableCell>
+                        <TableCell>
+                          {getValueString(dish.price.toString())}
+                        </TableCell>
+                        <TableCell>{dish.description}</TableCell>
+                        <TableCell>
+                          <Select
+                            value={dish.status}
+                            onValueChange={async (value) => {
+                              await updateDishStatus({
+                                id: dish.id!,
+                                dishStatus: value,
+                              });
+                              fetchDishes();
                             }}
                           >
-                            Chỉnh sửa
-                          </Button>
-                        </div>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value='true'>Hoạt động</SelectItem>
+                              <SelectItem value='false'>
+                                Ngưng hoạt động
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </TableCell>
+                        <TableCell>
+                          <div className='flex justify-center gap-3'>
+                            <AlertDialogCustom
+                              buttonTitle='Xóa'
+                              onSubmit={async () => {
+                                await deleteADish(dish.id!);
+                                fetchDishes();
+                              }}
+                            />
+
+                            <Button
+                              variant='success'
+                              onClick={() => {
+                                setIsEditDishOpen(true);
+                                setDishId((pre) =>
+                                  dish?.id && pre !== dish.id ? dish.id : pre
+                                );
+                              }}
+                            >
+                              Chỉnh sửa
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell
+                        colSpan={7}
+                        className='text-red-500 text-xl text-center'
+                      >
+                        Không tìm ra món!
                       </TableCell>
                     </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={7}
-                      className='text-red-500 text-xl text-center'
-                    >
-                      Không tìm ra món!
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </>
+        ) : (
+          <p className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl text-red-500 font-medium'>
+            Danh sách món trống!
+          </p>
+        )
       ) : (
-        <p className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl text-red-500 font-medium'>
-          Danh sách món trống!
+        <p className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl text-sky-500 font-medium'>
+          Đang tải...
         </p>
       )}
 
@@ -230,6 +263,7 @@ const DishesManagement = (props: Props) => {
         <DishForm
           onSubmit={onEditADishSubmit}
           open={isEditDishOpen}
+          submitTitle='Sửa'
           setOpen={setIsEditDishOpen}
           selectedDish={selectedDish}
           title='SỬA MÓN'
