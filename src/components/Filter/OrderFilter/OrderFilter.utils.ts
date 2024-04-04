@@ -1,8 +1,11 @@
 import { OrderInterface } from '@/types/order';
 import { PaymentMethod } from '@/types/paymentMethod';
-import { endOfDate, getDateFromString, startOfDate } from '@/utils/datetime';
+import {
+  convertDateStringToDateObject,
+  convertDateToDateObject,
+  filterTime,
+} from '@/utils/datetime';
 import { escapeText } from '@/utils/text';
-import dayjs from 'dayjs';
 import { filter, isEqual } from 'lodash';
 
 export const filterOptions = (
@@ -15,6 +18,8 @@ export const filterOptions = (
   }
 ): OrderInterface[] => {
   const { text = '', paymentMethod, fromTime, toTime } = options;
+
+  console.log({ text, paymentMethod, fromTime, toTime });
 
   if (text === '' && !paymentMethod && !fromTime && !toTime) {
     console.log('empty parameters');
@@ -59,9 +64,9 @@ export const filterOptions = (
   } else if (text === '' && !paymentMethod && fromTime && !toTime) {
     console.log('from time');
     const filteredOrders = allOrders.filter((order) => {
-      console.log(getDateFromString(order.createdAt));
-      getDateFromString(order.createdAt);
-      return getDateFromString(order.createdAt) === fromTime.getDate();
+      const orderTime = convertDateStringToDateObject(order.createdAt);
+      const convertedFromTime = convertDateToDateObject(fromTime);
+      if (filterTime(orderTime, convertedFromTime)) return order;
     });
 
     return filteredOrders.length > 0 ? filteredOrders : [];
@@ -69,10 +74,11 @@ export const filterOptions = (
     console.log('from and to time');
 
     const filteredOrders = allOrders.filter((order) => {
-      return (
-        getDateFromString(order.createdAt) >= fromTime.getDate() &&
-        getDateFromString(order.createdAt) <= toTime.getDate()
-      );
+      const orderTime = convertDateStringToDateObject(order.createdAt);
+      const convertedFromTime = convertDateToDateObject(fromTime);
+      const convertedToTime = convertDateToDateObject(toTime);
+      if (filterTime(orderTime, convertedFromTime, convertedToTime))
+        return order;
     });
 
     return filteredOrders;
@@ -114,7 +120,9 @@ export const filterOptions = (
   } else if (text && !paymentMethod && fromTime && !toTime) {
     console.log('text and from time');
     const filteredOrders = allOrders.filter((order) => {
-      return getDateFromString(order.createdAt) >= fromTime.getDate();
+      const orderTime = convertDateStringToDateObject(order.createdAt);
+      const convertedFromTime = convertDateToDateObject(fromTime);
+      if (filterTime(orderTime, convertedFromTime)) return order;
     });
 
     const textLowercase = escapeText(text).toLowerCase();
@@ -148,10 +156,11 @@ export const filterOptions = (
   } else if (text && !paymentMethod && fromTime && toTime) {
     console.log('text, from and to time');
     const filteredOrders = allOrders.filter((order) => {
-      return (
-        getDateFromString(order.createdAt) >= fromTime.getDate() &&
-        getDateFromString(order.createdAt) <= toTime.getDate()
-      );
+      const orderTime = convertDateStringToDateObject(order.createdAt);
+      const convertedFromTime = convertDateToDateObject(fromTime);
+      const convertedToTime = convertDateToDateObject(toTime);
+      if (filterTime(orderTime, convertedFromTime, convertedToTime))
+        return order;
     });
 
     const textLowercase = escapeText(text).toLowerCase();
@@ -187,8 +196,13 @@ export const filterOptions = (
     let filteredOrders = allOrders.filter(
       (order) => order.paymentMethod === paymentMethod
     );
+
+    console.log()
+
     filteredOrders = filteredOrders.filter((order) => {
-      return getDateFromString(order.createdAt) === fromTime.getDate();
+      const orderTime = convertDateStringToDateObject(order.createdAt);
+      const convertedFromTime = convertDateToDateObject(fromTime);
+      if (filterTime(orderTime, convertedFromTime)) return order;
     });
 
     return filteredOrders;
@@ -199,10 +213,10 @@ export const filterOptions = (
     );
 
     filteredOrders = filteredOrders.filter((order) => {
-      return (
-        getDateFromString(order.createdAt) >= fromTime.getDate() &&
-        getDateFromString(order.createdAt) <= toTime.getDate()
-      );
+      const orderTime = convertDateStringToDateObject(order.createdAt);
+      const convertedFromTime = convertDateToDateObject(fromTime);
+      const convertedToTime = convertDateToDateObject(toTime);
+      if(filterTime(orderTime, convertedFromTime, convertedToTime)) return order;
     });
 
     return filteredOrders;
@@ -213,7 +227,9 @@ export const filterOptions = (
     );
 
     filteredOrders = filteredOrders.filter((order) => {
-      return getDateFromString(order.createdAt) >= fromTime.getDate();
+      const orderTime = convertDateStringToDateObject(order.createdAt);
+      const convertedFromTime = convertDateToDateObject(fromTime);
+      if (filterTime(orderTime, convertedFromTime)) return order;
     });
 
     const textLowercase = escapeText(text).toLowerCase();
@@ -245,15 +261,19 @@ export const filterOptions = (
       }) || []
     );
   } else {
+    console.log('all');
+
+    console.log({paymentMethod, fromTime, toTime, text})
     let filteredOrders = allOrders.filter(
       (order) => order.paymentMethod === paymentMethod
     );
 
     filteredOrders = filteredOrders.filter((order) => {
-      return (
-        getDateFromString(order.createdAt) >= fromTime!.getDate() &&
-        getDateFromString(order.createdAt) <= toTime!.getDate()
-      );
+      const orderTime = convertDateStringToDateObject(order.createdAt);
+      const convertedFromTime = convertDateToDateObject(fromTime!);
+      const convertedToTime = convertDateToDateObject(toTime!);
+      if (filterTime(orderTime, convertedFromTime, convertedToTime))
+        return order;
     });
 
     const textLowercase = escapeText(text).toLowerCase();
@@ -285,13 +305,4 @@ export const filterOptions = (
       }) || []
     );
   }
-};
-
-export const getDateRange = (
-  range: number
-): { fromTime: string; toTime: string } => {
-  return {
-    fromTime: startOfDate(dayjs().subtract(range, 'day').toDate(), true),
-    toTime: endOfDate(undefined, true),
-  };
 };

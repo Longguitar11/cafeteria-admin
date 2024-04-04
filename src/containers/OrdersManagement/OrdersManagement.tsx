@@ -36,14 +36,7 @@ const OrdersManagement = (props: Props) => {
   const [isShowViewOrder, setIsShowViewOrder] = useState<boolean>(false);
   const [orderId, setOrderId] = useState<number>(0);
 
-  console.log({ filteredOrders });
-
   // useMemo
-  const sortedAllOrders: OrderInterface[] = useMemo(() => {
-    const copiedArr = JSON.parse(JSON.stringify(allOrders));
-    return copiedArr.reverse();
-  }, [allOrders]);
-
   const selectedOrder = useMemo(() => {
     const selectedOrder = allOrders.find((order) => order.id === orderId);
     if (selectedOrder) return selectedOrder;
@@ -79,10 +72,10 @@ const OrdersManagement = (props: Props) => {
       </p>
 
       {!isGettingOrders ? (
-        !isGettingOrders && allOrders.length > 0 ? (
+        allOrders.length > 0 ? (
           <div className='relative'>
             <OrderFilter
-              allOrders={sortedAllOrders}
+              allOrders={allOrders}
               orders={filteredOrders}
               setOrders={setFilteredOrders}
               className='mt-4'
@@ -91,7 +84,7 @@ const OrdersManagement = (props: Props) => {
             <Table className='mt-10'>
               <TableHeader>
                 <TableRow className='whitespace-nowrap'>
-                  <TableHead className=''>Id</TableHead>
+                  <TableHead>Id</TableHead>
                   <TableHead>Email NV</TableHead>
                   <TableHead>Ngày tạo</TableHead>
                   <TableHead>Tên KH</TableHead>
@@ -170,7 +163,7 @@ const OrdersManagement = (props: Props) => {
                       colSpan={9}
                       className='text-red-500 text-xl text-center'
                     >
-                      Đang tải...
+                      Không tìm ra đơn hàng!
                     </TableCell>
                   </TableRow>
                 )}

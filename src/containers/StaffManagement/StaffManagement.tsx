@@ -59,7 +59,7 @@ const StaffManagement = (props: Props) => {
       </p>
 
       {!isGettingStaff ? (
-        !isGettingStaff && allStaff.length > 0 ? (
+        allStaff.length > 0 ? (
           <div className='mt-4'>
             <StaffFilter
               allStaff={allStaff}

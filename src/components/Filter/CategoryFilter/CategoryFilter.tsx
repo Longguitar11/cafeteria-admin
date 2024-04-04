@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Input } from '../../ui/input';
+import isEqual from 'lodash/isEqual';
 import { cn } from '@/lib/utils';
 import { Props } from './CategoryFilter.models';
 import { filterOptions } from './CategoryFilter.utils';
@@ -19,7 +20,7 @@ const CategoryFilter = (props: Props) => {
         text: searchValue,
       });
 
-      if (result.toString() !== categories.toString()) {
+      if (!isEqual(result, categories)) {
         setCategories(result);
       }
     }, 800);

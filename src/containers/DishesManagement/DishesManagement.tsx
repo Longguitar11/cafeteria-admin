@@ -135,7 +135,7 @@ const DishesManagement = (props: Props) => {
       </Button>
 
       {!isGettingDishes ? (
-        allDishes.length > 0 && !isGettingDishes ? (
+        allDishes.length > 0 ? (
           <>
             <DishFilter
               allDishes={allDishes}
@@ -150,8 +150,8 @@ const DishesManagement = (props: Props) => {
                   <TableRow>
                     <TableHead>STT</TableHead>
                     <TableHead>Tên</TableHead>
-                    <TableHead>Loại</TableHead>
                     <TableHead>Ảnh</TableHead>
+                    <TableHead>Loại</TableHead>
                     <TableHead>Giá</TableHead>
                     <TableHead>Mô tả</TableHead>
                     <TableHead>Trạng thái</TableHead>

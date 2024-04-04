@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { Props } from './DishFilter.models';
 import { filterOptions } from './DishFilter.utils';
 import { CategoryFilter } from './DishFilter.views';
+import isEqual from 'lodash/isEqual';
 
 const Filter = (props: Props) => {
   const { className = '', dishes, allDishes, setDishes } = props;
@@ -22,7 +23,7 @@ const Filter = (props: Props) => {
         cateId: cateId!,
       });
 
-      if (result.toString() !== dishes.toString()) {
+      if (!isEqual(result, dishes)) {
         setDishes(result);
       }
     }, 800);

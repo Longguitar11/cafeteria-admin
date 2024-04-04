@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Input } from '../../ui/input';
 import { cn } from '@/lib/utils';
-import { DayType, Props } from './OrderFilter.models';
-import { filterOptions, getDateRange } from './OrderFilter.utils';
+import { Props } from './OrderFilter.models';
+import { filterOptions } from './OrderFilter.utils';
 import { PaymentMethod } from '@/types/paymentMethod';
 import {
   Select,
@@ -14,6 +14,7 @@ import {
 import { CalendarIcon } from '@radix-ui/react-icons';
 import { format } from 'date-fns';
 import { DateRange } from 'react-day-picker';
+import isEqual from 'lodash/isEqual';
 
 import { Calendar } from '@/components/ui/calendar';
 import {
@@ -56,11 +57,18 @@ const OrderFilter = (props: Props) => {
 
       console.log({ result });
 
-      setOrders(result);
+      if (!isEqual(result, orders)) {
+        console.log('set new filtered orders')
+        setOrders(result);
+      }
     }, 800);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValue, paymentMethod, date]);
+
+  // useEffect(() => {
+  //   reset();
+  // }, [allOrders]);
 
   return (
     <div className={cn('flex gap-3', className)}>

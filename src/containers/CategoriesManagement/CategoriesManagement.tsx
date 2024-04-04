@@ -99,7 +99,7 @@ const CategoriesManagement = (props: Props) => {
       </Button>
 
       {!isGettingCategories ? (
-        !isGettingCategories && categories.length > 0 ? (
+        categories.length > 0 ? (
           <>
             <CategoryFilter
               className='mt-20 mb-4'

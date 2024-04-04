@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Input } from '../../ui/input';
+import isEqual from 'lodash/isEqual';
 import { cn } from '@/lib/utils';
 import { Props } from './StaffFilter.models';
 import { filterOptions } from './StaffFilter.utils';
@@ -16,7 +17,7 @@ const StaffFilter = (props: Props) => {
     timerUpdateSearchText.current = setTimeout(() => {
       const result = filterOptions(allStaff, { text: searchValue});
       
-      if (result.toString() !== staff.toString()) {
+      if (!isEqual(result, staff)) {
         setStaff(result);
       }
     }, 800)
